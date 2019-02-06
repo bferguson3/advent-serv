@@ -1,0 +1,8 @@
+{
+  "name": "dqc-sugoroku-server",
+  "version": "1.0.0",
+  "author": "Josh Beard",
+  "dependencies": {
+    "enet": "0.2.9"
+  }
+}

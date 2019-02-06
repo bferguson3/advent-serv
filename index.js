@@ -17,115 +17,68 @@ enet.createServer({
 
     host.on("connect", function(peer, data) {
 
-        const newClientId = generateClientId();
-
-        console.log(`Peer ${newClientId} connected`);
-
-        const connectedClients = [];
+        console.log(`Peer ${peer._pointer} connected`);
 
         const newClient = {
-            clientId: newClientId,
-            peerId: peer._pointer,
-            peer: peer, 
-            x: 0,
-            y: 0,
+            clientId: peer._pointer,
             lastActivity: getUtcTimestamp(),
-            legitAccount: false
+            authenticationHash: "",
         };
-
-        for (const client of clients) {
-            const connectedClient = {
-                client: client.clientId
-            };
-
-            connectedClient.x = client.x 
-                ? client.x
-                : 0;
-
-            connectedClient.y = client.y
-                ? client.y
-                : 0;
-
-            connectedClients.push(connectedClient);
-
-            const addNewClientObject = {
-                type: "addpeer",
-                clientId: newClient.clientId,
-                x: newClient.x,
-                y: newClient.y
-            };
-
-            sendResponse(client.peer, addNewClientObject, client.clientId);
-        }
 
         clients.push(newClient);
 
         peer.on("message", function(packet, channel) {
-            console.log("Message received from " + peer._pointer);
 
+            const clientId = peer._pointer;
+            let client = null;
+
+            for (const registeredClient of clients) {
+                if (registeredClient.clientId === clientId) {
+                    client = registeredClient;
+                    break;
+                }
+            }
+
+            // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity
+            if (!client) {
+                return;
+            }
+
+            client.lastActivity = getUtcTimestamp();
+            
             const gameObject = JSON.parse(packet.data().toString());
             console.log(gameObject);
-            const messageText = "Got packet from " + gameObject.client_id + " with message_type of " + gameObject.message_type;
 
-            const clientId = gameObject.client_id;
+            console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
+
             const messageType = gameObject.message_type;
 
-            if (messageType === "move") {
-                const xPos = gameObject.x;
-                const yPos = gameObject.y;
-
-                for (const client of clients) {
-                    if (client.clientId === clientId) {
-                        client.x = xPos;
-                        client.y = yPos;
-                        lastActivity = getUtcTimestamp();
-                    } else {
-                        const positionUpdateObject = {
-                            type: "peermove",
-                            clientId: clientId,
-                            x: xPos,
-                            y: yPos
-                        };
-    
-                        sendResponse(client.peer, positionUpdateObject, client.clientId);
-                    }
-                }
-            } else if (messageType === "ping") {
-                for (const client of clients) {
-                    if (client.clientId === clientId) {
-                        client.lastActivity = getUtcTimestamp();
-                        break;
-                    }
-                }
-
-                sendResponse(peer, { type: "pong" }, clientId)
-            } else if (messageType === "login") {
-                //console.log('test');
+            if (messageType === "login") {
+                
                 if (gameObject.data.player_username === "guest" && gameObject.data.password === "password"){
                     const loginSucceededObject = {
                         type: "login_response",
                         clientId: clientId,
                         value: "true"
                     };
-                    peer.legitAccount = true;
-                    sendResponse(peer, loginSucceededObject, "");
+                    // TOOD: put a hash here
+                    client.authenticationHash = "PUTAHASHHERE"
+                    sendResponse(peer, loginSucceededObject, client);
                     console.log(loginSucceededObject);
-                    lastActivity = getUtcTimestamp();
                 }
             } else if (messageType === "request_map_list") {
-                if(peer.legitAccount){
+                if(client.authenticationHash){
                     const mapListObject = {
                         type: "map_list",
                         clientId: clientId,
                         value: "MAP01"
                     };
-                    sendResponse(peer, mapListObject, "");
+                    sendResponse(peer, mapListObject, client);
                     console.log(mapListObject);
-                    lastActivity = getUtcTimestamp();
                 }
             } 
             else if (messageType === "request_character_data") {
-                if (peer.legitAccount) {
+                if (client.authenticationHash) {
                     // this will be pulled from a local database
                     const tempPlayerDataObj = {
                         type: "player_data",
@@ -143,7 +96,7 @@ enet.createServer({
                             equipment: {}
                         }
                     };
-                    sendResponse(peer, tempPlayerDataObj, "");
+                    sendResponse(peer, tempPlayerDataObj, client);
                     console.log(tempPlayerDataObj);
                     lastActivity = getUtcTimestamp();
                 }
@@ -164,11 +117,11 @@ enet.createServer({
 
         const clientResponse = {
             type: "connect",
-            clientId: newClientId,
-            peers: connectedClients
+            clientId: newClient.clientId,
+            peers: []
         };
 
-        sendResponse(peer, clientResponse, newClientId);
+        sendResponse(peer, clientResponse, newClient);
     });
 
     host.start(50);
@@ -181,14 +134,19 @@ setInterval(() => {
     const currentTime = getUtcTimestamp();
 
     while (i--) {
-        if (currentTime - clients[i].lastActivity >= 60000) {
+        if (!clients[i] || currentTime - clients[i].lastActivity >= 60000) {
             clients.splice(i, 1);
         }
     }
 }, (1000));
 
-function sendResponse(peer, data, clientId) {
+function sendResponse(peer, data, client) {
     const jsonResponse = JSON.stringify(data);
+    let clientId = "";
+
+    if (client && client.clientId) {
+        clientId = client.clientId;
+    }
 
     peer.send(0, jsonResponse, function(err) {
         if (err) {
@@ -213,20 +171,4 @@ function getUtcTimestamp() {
     );
 
     return utcTimestamp;
-}
-
-function generateClientId () {
-
-    let start = "";
-    let end = "";
-
-    const utcTimestamp = getUtcTimestamp();    
-
-    // randomized start/end
-    for (let i = 0; i < 5; i++) {
-        start = `${start}${Math.floor((Math.random() * 9) + 1)}`;
-        end = `${end}${Math.floor((Math.random() * 9) + 1)}`;
-    }
-
-    return `${start}${utcTimestamp.toString()}${end}`;
 }

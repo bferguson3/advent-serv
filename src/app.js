@@ -24,7 +24,7 @@ enet.createServer({
         const newClient = {
             clientId: peer._pointer,
             lastActivity: util.getUtcTimestamp(),
-            authenticationHash: "",
+            authenticationHash: null,
         };
 
         clients.push(newClient);
@@ -73,7 +73,7 @@ enet.createServer({
                             messageHandler = message_handlers.map_list_handler;
                             break;
                         case "request_character_data":
-                            messageHandler = message_handlers.request_character_data;
+                            messageHandler = message_handlers.request_character_data_handler;
                             break;   
                         default:
                             // TODO: ?maybe add a bad request handler...?
@@ -101,7 +101,7 @@ enet.createServer({
     });
 
     host.start(50);
-    console.log("Server ready on %s:%s", host.address().address, host.address().port);
+    console.info("Server ready on %s:%s", host.address().address, host.address().port);
 });
 
 // check every second and remove any clients that haven't been active in the last 60 seconds

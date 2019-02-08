@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "author": "Josh Beard",
   "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "enet": "0.2.9"
   }
 }

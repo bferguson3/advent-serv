@@ -11,8 +11,8 @@ export function list_lobbies_handler(gameObject, client, serverData) {
     const endNum = startNum + 10;
 
     for (let i = startNum; i < endNum; i++) {
-        if (gameObject.data.lobbies.length >= i+1) {
-            lobbies.push(gameObject.data.lobbies[i]);
+        if (serverData.lobbies.length >= i+1) {
+            lobbies.push(serverData.lobbies[i]);
         }
     }
 

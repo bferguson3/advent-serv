@@ -78,6 +78,9 @@ enet.createServer({
                         case "request_character_data":
                             messageHandler = message_handlers.request_character_data_handler;
                             break;   
+                        case "list_lobbies":
+                            messageHandler = message_handlers.list_lobbies_handler;
+                            break;
                         default:
                             // TODO: ?maybe add a bad request handler...?
                             break;

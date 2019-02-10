@@ -7,8 +7,9 @@ export function login_handler(gameObject, client, serverData) {
 
     if (gameObject.data.player_username === "guest" && gameObject.data.password === "password"){
         loginResponseObject.value = "true";
-        // TOOD: put a hash here
-        client.authenticationHash = "PUTAHASHHERE"
+        
+        client.username = gameObject.data.player_username;
+        client.authenticationHash = "PUTAHASHHERE" // TOOD: put a hash here
     } else {
         loginResponseObject.value = "false";
     }

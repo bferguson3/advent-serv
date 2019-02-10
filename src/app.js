@@ -6,7 +6,17 @@ const addr = new enet.Address("0.0.0.0", 9521);
 
 const serverData = {
     clients: [],
-    lobbies: []
+    lobbies: [],
+
+    getUser: (clientId) => {
+        for (const client of this.clients) {
+            if (client.clientId === clientid) {
+                return client;
+            }
+        }
+
+        return null;
+    }
 };
 
 enet.createServer({
@@ -35,14 +45,8 @@ enet.createServer({
         peer.on("message", function(packet, channel) {
 
             const clientId = peer._pointer;
-            let client = null;
 
-            for (const registeredClient of serverData.clients) {
-                if (registeredClient.clientId === clientId) {
-                    client = registeredClient;
-                    break;
-                }
-            }
+            const client = serverData.getUser(clientId);
 
             // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity
             if (!client) {
@@ -80,6 +84,9 @@ enet.createServer({
                             break;   
                         case "list_lobbies":
                             messageHandler = message_handlers.list_lobbies_handler;
+                            break;
+                        case "create_lobby":
+                            messageHandler = message_handlers.create_lobby_handler;
                             break;
                         default:
                             // TODO: ?maybe add a bad request handler...?

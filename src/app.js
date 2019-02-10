@@ -4,7 +4,10 @@ import * as util from "./util";
 
 const addr = new enet.Address("0.0.0.0", 9521);
 
-const clients = [];
+const serverData = {
+    clients: [],
+    lobbies: []
+};
 
 enet.createServer({
     address: addr,
@@ -27,14 +30,14 @@ enet.createServer({
             authenticationHash: null,
         };
 
-        clients.push(newClient);
+        serverData.clients.push(newClient);
 
         peer.on("message", function(packet, channel) {
 
             const clientId = peer._pointer;
             let client = null;
 
-            for (const registeredClient of clients) {
+            for (const registeredClient of serverData.clients) {
                 if (registeredClient.clientId === clientId) {
                     client = registeredClient;
                     break;
@@ -83,7 +86,7 @@ enet.createServer({
             }
 
             if (messageHandler) {
-                const responseObject = messageHandler(gameObject, client, clients);
+                const responseObject = messageHandler(gameObject, client, serverData);
                 console.log(responseObject);
                 if (responseObject) {
                     sendResponse(peer, responseObject, client);
@@ -106,13 +109,13 @@ enet.createServer({
 
 // check every second and remove any clients that haven't been active in the last 60 seconds
 setInterval(() => {
-    let i = clients.length;
+    let i = serverData.clients.length;
 
     const currentTime = util.getUtcTimestamp();
     
     while (i--) {
-        if (!clients[i] || currentTime - clients[i].lastActivity >= 60000) {
-            clients.splice(i, 1);
+        if (!serverData.clients[i] || currentTime - serverData.clients[i].lastActivity >= 60000) {
+            serverData.clients.splice(i, 1);
         }
     }
 }, (1000));

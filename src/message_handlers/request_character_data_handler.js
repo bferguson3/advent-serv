@@ -1,4 +1,4 @@
-export function request_character_data_handler(gameObject, client, clients) {
+export function request_character_data_handler(gameObject, client, serverData) {
 
     // this will be pulled from a local database
     const tempPlayerDataObj = {

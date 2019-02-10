@@ -1,4 +1,4 @@
-export function login_handler(gameObject, client, clients) {
+export function login_handler(gameObject, client, serverData) {
 
     const loginResponseObject = {
         type: "login_response",

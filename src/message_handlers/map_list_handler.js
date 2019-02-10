@@ -1,4 +1,4 @@
-export function map_list_handler(gameObject, client, clients) {
+export function map_list_handler(gameObject, client, serverData) {
 
     const mapListObject = {
         type: "map_list",

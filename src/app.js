@@ -8,13 +8,13 @@ const serverData = {
     clients: [],
     lobbies: [],
 
-    getUser: (clientId) => {
+    getUser: function(clientId) {
+        //let clients = serverData.clients;
         for (const client of this.clients) {
-            if (client.clientId === clientid) {
-                return client;
+                if (client.clientId === clientId) {
+                    return client;
             }
         }
-
         return null;
     }
 };
@@ -38,14 +38,15 @@ enet.createServer({
             clientId: peer._pointer,
             lastActivity: util.getUtcTimestamp(),
             authenticationHash: null,
-        };
+        }
 
         serverData.clients.push(newClient);
+        //console.log(serverData.clients);
 
         peer.on("message", function(packet, channel) {
 
             const clientId = peer._pointer;
-
+            console.log(serverData.clients);
             const client = serverData.getUser(clientId);
 
             // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity

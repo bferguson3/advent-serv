@@ -1,5 +1,3 @@
-import { createLobbyId } from "../util";
-
 export function create_lobby_handler(gameObject, client, serverData) {
 
     let lobbyId = "";

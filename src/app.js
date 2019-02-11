@@ -89,6 +89,9 @@ enet.createServer({
                         case "create_lobby":
                             messageHandler = message_handlers.create_lobby_handler;
                             break;
+                        case "join_lobby":
+                            messageHandler = message_handlers.join_lobby_handler;
+                            break;
                         case "leave_lobby":
                             messageHandler = message_handlers.leave_lobby_handler;
                             break;

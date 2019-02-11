@@ -1,6 +1,42 @@
 # Dragoon Dice Chronicle - Server
 
-Usage:<br>
-npm install<br>
-then:<br>
+### Usage
+```
+npm install
 node index 
+```
+
+### Commands
+
+Below is a list of commands and the data expected along with each one.
+
+* `login`
+  
+    - `player_username`
+    - `password`
+    
+
+* `request_map_list`
+
+    - `[none needed]`
+
+* `request_character_data`
+
+    - ` `
+
+* `list_lobbies`
+
+    - `page (optional - will default to 0)`
+
+* `create_lobby`
+
+    - `mapname`
+    - `locked (optional - will default to false)`
+
+* `join_lobby`
+
+    - `lobbyId`
+
+* `leave_lobby`
+
+    - `lobbyId`

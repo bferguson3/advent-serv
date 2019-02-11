@@ -89,6 +89,9 @@ enet.createServer({
                         case "create_lobby":
                             messageHandler = message_handlers.create_lobby_handler;
                             break;
+                        case "leave_lobby":
+                            messageHandler = message_handlers.leave_lobby_handler;
+                            break;
                         default:
                             // TODO: ?maybe add a bad request handler...?
                             break;
@@ -127,6 +130,8 @@ setInterval(() => {
     while (i--) {
         if (!serverData.clients[i] || currentTime - serverData.clients[i].lastActivity >= 60000) {
             serverData.clients.splice(i, 1);
+
+            // TODO: check to see if user is in any lobbies
         }
     }
 }, (1000));

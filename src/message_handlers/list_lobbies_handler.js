@@ -1,5 +1,6 @@
 export function list_lobbies_handler(gameObject, client, serverData) {
 
+    const lobbiesPerPage = 10;
     let page = 0;
 
     if (gameObject && gameObject.data && gameObject.data.page) {
@@ -7,8 +8,8 @@ export function list_lobbies_handler(gameObject, client, serverData) {
     }
 
     const lobbies = [];
-    const startNum = page * 10;
-    const endNum = startNum + 10;
+    const startNum = page * lobbiesPerPage;
+    const endNum = startNum + lobbiesPerPage;
 
     for (let i = startNum; i < endNum; i++) {
         if (serverData.lobbies.length >= i+1) {
@@ -19,6 +20,9 @@ export function list_lobbies_handler(gameObject, client, serverData) {
     const lobbyResponseObject = {
         type: "lobby_list",
         pageNum: page,
+        pageCount: serverData.lobbies.length === 0
+            ? 1
+            : Math.ceil(serverData.lobbies.length / lobbiesPerPage),
         totalCount: serverData.lobbies.length,
         lobbies: lobbies
     };

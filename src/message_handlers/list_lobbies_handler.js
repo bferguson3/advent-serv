@@ -20,7 +20,7 @@ export function list_lobbies_handler(gameObject, client, serverData) {
         type: "lobby_list",
         pageNum: page,
         totalCount: serverData.lobbies.length,
-        lobbies: serverData.lobbies
+        lobbies: lobbies
     };
 
     return lobbyResponseObject;

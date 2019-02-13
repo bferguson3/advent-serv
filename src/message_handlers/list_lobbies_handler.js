@@ -24,7 +24,7 @@ export function list_lobbies_handler(gameObject, client, serverData) {
             ? 1
             : Math.ceil(serverData.lobbies.length / lobbiesPerPage),
         totalCount: serverData.lobbies.length,
-        lobbies: lobbies
+        lobbies: serverData.lobbies
     };
 
     return lobbyResponseObject;

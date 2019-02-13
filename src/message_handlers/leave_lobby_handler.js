@@ -1,9 +1,10 @@
-export function create_lobby_handler(gameObject, client, serverData) {
+export function leave_lobby_handler(gameObject, client, serverData) {
 
-    let lobbyId = "";
+    let lobbyId = null;
     const clientId = client.clientId;
 
     // TODO: extract this same logic out for kicking another player
+    console.log("is this working?");
 
     if (gameObject && gameObject.data) {
         if (gameObject.data.lobbyId) {
@@ -13,6 +14,7 @@ export function create_lobby_handler(gameObject, client, serverData) {
 
     if (!lobbyId) {
         // TODO: return error
+        console.log(clientId + " tried to leave a lobby, but didn't give a lobbyId");
         return null;
     }
 

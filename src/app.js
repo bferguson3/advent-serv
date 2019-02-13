@@ -104,7 +104,7 @@ enet.createServer({
 
             if (messageHandler) {
                 const responseObject = messageHandler(gameObject, client, serverData);
-                console.log(responseObject);
+                console.log(`Responded with: ${responseObject}`);
                 if (responseObject) {
                     sendResponse(peer, responseObject, client);
                 }

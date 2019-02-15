@@ -35,7 +35,7 @@ export function join_lobby_handler(gameObject, client, serverData) {
 
     if (!joinedLobby) {
         return null;
-    }
+    } 
 
     const lobbyResponseObject = {
         type: "joined_lobby",
@@ -43,6 +43,6 @@ export function join_lobby_handler(gameObject, client, serverData) {
         lobby: joinedLobby,
         roomslot: pslot
     };
-    
+    //test
     return lobbyResponseObject;
 }

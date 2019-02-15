@@ -2,6 +2,7 @@ export function join_lobby_handler(gameObject, client, serverData) {
 
     let lobbyId = "";
     let joinedLobby = null;
+    let pslot = 0;
 
     if (gameObject && gameObject.data && gameObject.data.lobbyId) {
         lobbyId = gameObject.data.lobbyId;
@@ -14,10 +15,13 @@ export function join_lobby_handler(gameObject, client, serverData) {
 
     for (const lobby of serverData.lobbies) {
         if (lobby.id === lobbyId) {
+            pslot = lobby.players.length+1;
             lobby.players.push({
                 clientId: client.clientId,
-                user: client.username
+                user: client.username,
+                slot: pslot 
             });
+            
 
             client.lobbyId = lobbyId; // keep current id on the client
             //console.log(`client.lobbyid ${client.lobbyId}`);
@@ -36,7 +40,8 @@ export function join_lobby_handler(gameObject, client, serverData) {
     const lobbyResponseObject = {
         type: "joined_lobby",
         public: "room", // "private", or "server" for different levels of publicity.
-        lobby: joinedLobby
+        lobby: joinedLobby,
+        roomslot: pslot
     };
     
     return lobbyResponseObject;

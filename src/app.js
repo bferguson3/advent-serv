@@ -47,7 +47,7 @@ enet.createServer({
         peer.on("message", function(packet, channel) {
 
             const clientId = peer._pointer;
-            console.log(serverData.clients);
+            //console.log(serverData.clients.user);
             const client = serverData.getUser(clientId);
 
             // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity
@@ -113,6 +113,7 @@ enet.createServer({
                             
                             if (lob.id === client.lobbyId){
                                 for (let p = 0; p < lob.players.length; p++){
+                                    console.log (lob.players[p]);
                                     const user = serverData.getUser(lob.players[p].clientId);
                                     
                                     sendResponse(user.peerRef, responseObject, user);

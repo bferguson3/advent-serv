@@ -43,7 +43,7 @@ export function leave_lobby_handler(gameObject, client, serverData) {
 
     const lobbyLeftObject = {
         type: "player_left",
-        //public: "room", // "private", or "server" for different levels of publicity.
+        public: "room", // "private", or "server" for different levels of publicity.
         player: playerSlot
     };
 

@@ -19,6 +19,8 @@ export function join_lobby_handler(gameObject, client, serverData) {
                 user: client.username
             });
 
+            client.lobbyId = lobbyId; // keep current id on the client
+            //console.log(`client.lobbyid ${client.lobbyId}`);
             lobby.playerCount = lobby.players.length;
 
             joinedLobby = lobby;
@@ -32,9 +34,10 @@ export function join_lobby_handler(gameObject, client, serverData) {
     }
 
     const lobbyResponseObject = {
-        type: "lobby",
+        type: "joined_lobby",
+        public: "room", // "private", or "server" for different levels of publicity.
         lobby: joinedLobby
     };
-
+    
     return lobbyResponseObject;
 }

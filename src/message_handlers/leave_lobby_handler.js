@@ -2,7 +2,7 @@ export function leave_lobby_handler(gameObject, client, serverData) {
 
     let lobbyId = null;
     const clientId = client.clientId;
-
+    let playerSlot = 0;
     // TODO: extract this same logic out for kicking another player
     
     if (gameObject && gameObject.data) {
@@ -24,6 +24,7 @@ export function leave_lobby_handler(gameObject, client, serverData) {
         if (lobby.id === lobbyId) {
             for (let j = 0; j < lobby.players.length; j++) {
                 if (lobby.players[j].clientId === clientId) {
+                    playerSlot = j+1;
                     lobby.players.splice(j, 1);
 
                     lobby.playerCount = lobby.players.length;
@@ -40,5 +41,11 @@ export function leave_lobby_handler(gameObject, client, serverData) {
         break;
     }
 
-    return null;
+    const lobbyLeftObject = {
+        type: "player_left",
+        //public: "room", // "private", or "server" for different levels of publicity.
+        player: playerSlot
+    };
+
+    return lobbyLeftObject;
 }

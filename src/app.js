@@ -36,6 +36,7 @@ enet.createServer({
 
         const newClient = {
             clientId: peer._pointer,
+            peerRef: peer,
             lastActivity: util.getUtcTimestamp(),
             authenticationHash: null,
         }
@@ -104,9 +105,25 @@ enet.createServer({
 
             if (messageHandler) {
                 const responseObject = messageHandler(gameObject, client, serverData);
-                console.log(`Responded with: ${responseObject}`);
+                
                 if (responseObject) {
-                    sendResponse(peer, responseObject, client);
+                    if (responseObject.public === "room"){
+                        for (let i = 0; i < serverData.lobbies.length; i++) {
+                            const lob = serverData.lobbies[i];
+                            
+                            if (lob.id === client.lobbyId){
+                                for (let p = 0; p < lob.players.length; p++){
+                                    const user = serverData.getUser(lob.players[p].clientId);
+                                    
+                                    sendResponse(user.peerRef, responseObject, user);
+                                }
+
+                                break;
+                            }
+                        }
+                    } else {
+                        sendResponse(peer, responseObject, client);
+                    }
                 }
             }
         });

@@ -78,6 +78,9 @@ enet.createServer({
                 //non anonymous - check auth hash   
                 if (client.authenticationHash) {
                     switch (messageType) {
+                        case "pong":
+                            //basically just do nothing other than update the activity time
+                            return; 
                         case "request_map_list":
                             messageHandler = message_handlers.map_list_handler;
                             break;
@@ -149,13 +152,36 @@ setInterval(() => {
     const currentTime = util.getUtcTimestamp();
     
     while (i--) {
-        if (!serverData.clients[i] || currentTime - serverData.clients[i].lastActivity >= 60000) {
+        // null client, so just close gap in array
+        if (!serverData.clients[i]) {
+            serverData.clients.splice(i, 1);
+        }
+
+        const lastActivityDelta = currentTime - serverData.clients[i].lastActivity
+
+        // drop client for inactivity
+        if (lastActivityDelta >= 60000) {
+            console.log(`Dropping ${serverData.clients[i].clientId} for inactivity`);
             serverData.clients.splice(i, 1);
 
             // TODO: check to see if user is in any lobbies
+        } else if (lastActivityDelta >= 10000) {
+            sendPing(serverData.clients[i]);
         }
     }
 }, (1000));
+
+function sendPing(client) {
+    if (!client || !client.peerRef) {
+        return;
+    }
+
+    const message = {
+        type: "ping"
+    };
+
+    sendResponse(client.peerRef, message, client);
+}
 
 function sendResponse(peer, data, client) {
     const jsonResponse = JSON.stringify(data);

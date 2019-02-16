@@ -162,13 +162,42 @@ setInterval(() => {
         // drop client for inactivity
         if (lastActivityDelta >= 60000) {
             console.log(`Dropping ${serverData.clients[i].clientId} for inactivity`);
+            
+            if (serverData.clients[i].lobbyId) {
+                console.log(`user was in lobby ${serverData.clients[i].lobbyId}`);
+                for (let j = 0; j < serverData.lobbies.length; j++){
+                    if (serverData.lobbies[j].id == serverData.clients[i].lobbyId){
+                        // the client is in lobby j
+                        for (let k = 0; k < serverData.lobbies[j].players.length; k++){
+                            let p = serverData.lobbies[j].players;
+                            if (p[k].clientId == serverData.clients[i].clientId) {
+                                //the player index is k
+                                console.log(`user in slot ${p[k].slot} removed from lobby for inactivity`);
+                                p.splice(k, 1);
+                                //console.log(serverData.lobbies[j].players.length);
+                                if (p.length == 0){
+                                    serverData.lobbies.splice(j, 1);
+                                    console.log('lobby closed, empty.');
+                                }
+                                else{
+                                    SendLobbyUpdate(serverData.lobbies[j]);
+                                }
+                                break;
+                                
+                            }
+                        }
+                        break; //end lobby/client id match
+                    }
+                }
+                
+            }
             serverData.clients.splice(i, 1);
-
-            // TODO: check to see if user is in any lobbies
+            
         } else if (lastActivityDelta >= 10000) {
             sendPing(serverData.clients[i]);
         }
     }
+
 }, (1000));
 
 function sendPing(client) {
@@ -181,6 +210,21 @@ function sendPing(client) {
     };
 
     sendResponse(client.peerRef, message, client);
+}
+
+function SendLobbyUpdate(lob){
+    
+    for (let p = 0; p < lob.players.length; p++){
+        //console.log (lob.players[p]);
+        const user = serverData.getUser(lob.players[p].clientId);
+        lob.players[p].slot = p+1;      
+        const message = {
+            type: "lobby_update",
+            lobby: lob
+        };
+        sendResponse(user.peerRef, message, user);
+    }
+    //sendResponse()
 }
 
 function sendResponse(peer, data, client) {

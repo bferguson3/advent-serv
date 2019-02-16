@@ -31,6 +31,7 @@ export function leave_lobby_handler(gameObject, client, serverData) {
 
                     if (lobby.playerCount === 0) {
                         serverData.lobbies.splice(i, 1);
+                        console.log("Lobby empty; closed.");
                     }
 
                     break;

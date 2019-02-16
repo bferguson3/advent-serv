@@ -35,6 +35,8 @@ export function create_lobby_handler(gameObject, client, serverData) {
         ]
     };
 
+    client.lobbyId = lobby.id;
+
     serverData.lobbies.push(lobby);
 
     const lobbyResponseObject = {

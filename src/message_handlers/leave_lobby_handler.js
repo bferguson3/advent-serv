@@ -25,9 +25,9 @@ export function leave_lobby_handler(gameObject, client, serverData) {
         if (lobby.id === lobbyId) {
             for (let j = 0; j < lobby.players.length; j++) {
                 if (lobby.players[j].clientId === clientId) {
-                    playerSlot = j+1;
+                    //playerSlot = j+1;
                     curLobby = lobby;
-                    
+
                     lobby.players.splice(j, 1);
 
                     lobby.playerCount = lobby.players.length;
@@ -39,6 +39,10 @@ export function leave_lobby_handler(gameObject, client, serverData) {
 
                     break;
                 }
+            }
+            for (let j = 0; j < lobby.players.length; j++){
+                //reassign player slots
+                lobby.players[j].slot = j+1;
             }
         }
 

@@ -29,10 +29,13 @@ export function create_lobby_handler(gameObject, client, serverData) {
         players: [
             {
                 clientId: client.clientId,
-                user: client.username
+                user: client.username,
+                slot: 1
             }
         ]
     };
+
+    client.lobbyId = lobby.id;
 
     serverData.lobbies.push(lobby);
 

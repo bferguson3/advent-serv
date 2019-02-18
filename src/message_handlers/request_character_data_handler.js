@@ -7,6 +7,7 @@ export function request_character_data_handler(gameObject, client, serverData) {
         sheet: 'assets/filius_sheet.png',
         level: 1,
         currentClass: 'jester',
+        classLevel: 0,
         clvl: {
             jester: 1,
             warrior: 1,
@@ -18,13 +19,13 @@ export function request_character_data_handler(gameObject, client, serverData) {
         equipment: {}
     };
 
-    calculateStats(tempPlayer);
-
+    let playerObj = calculateStats(tempPlayer);
+    
     // this will be pulled from a local database
     const playerResponse = {
         type: "player_data",
         clientId: client.clientId,
-        value: tempPlayer
+        value: playerObj
     };
 
     return playerResponse;

@@ -36,6 +36,7 @@ enet.createServer({
 
         const newClient = {
             clientId: peer._pointer,
+            peerRef: peer,
             lastActivity: util.getUtcTimestamp(),
             authenticationHash: null,
         }
@@ -46,7 +47,7 @@ enet.createServer({
         peer.on("message", function(packet, channel) {
 
             const clientId = peer._pointer;
-            console.log(serverData.clients);
+            //console.log(serverData.clients.user);
             const client = serverData.getUser(clientId);
 
             // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity
@@ -77,6 +78,9 @@ enet.createServer({
                 //non anonymous - check auth hash   
                 if (client.authenticationHash) {
                     switch (messageType) {
+                        case "pong":
+                            //basically just do nothing other than update the activity time
+                            return; 
                         case "request_map_list":
                             messageHandler = message_handlers.map_list_handler;
                             break;
@@ -104,9 +108,26 @@ enet.createServer({
 
             if (messageHandler) {
                 const responseObject = messageHandler(gameObject, client, serverData);
-                console.log(responseObject);
+                
                 if (responseObject) {
-                    sendResponse(peer, responseObject, client);
+                    if (responseObject.public === "room"){
+                        for (let i = 0; i < serverData.lobbies.length; i++) {
+                            const lob = serverData.lobbies[i];
+                            
+                            if (lob.id === client.lobbyId){
+                                for (let p = 0; p < lob.players.length; p++){
+                                    console.log (lob.players[p]);
+                                    const user = serverData.getUser(lob.players[p].clientId);
+                                    
+                                    sendResponse(user.peerRef, responseObject, user);
+                                }
+
+                                break;
+                            }
+                        }
+                    } else {
+                        sendResponse(peer, responseObject, client);
+                    }
                 }
             }
         });
@@ -131,13 +152,80 @@ setInterval(() => {
     const currentTime = util.getUtcTimestamp();
     
     while (i--) {
-        if (!serverData.clients[i] || currentTime - serverData.clients[i].lastActivity >= 60000) {
+        // null client, so just close gap in array
+        if (!serverData.clients[i]) {
             serverData.clients.splice(i, 1);
+        }
 
-            // TODO: check to see if user is in any lobbies
+        const lastActivityDelta = currentTime - serverData.clients[i].lastActivity
+
+        // drop client for inactivity
+        if (lastActivityDelta >= 60000) {
+            console.log(`Dropping ${serverData.clients[i].clientId} for inactivity`);
+            
+            if (serverData.clients[i].lobbyId) {
+                console.log(`user was in lobby ${serverData.clients[i].lobbyId}`);
+                for (let j = 0; j < serverData.lobbies.length; j++){
+                    if (serverData.lobbies[j].id == serverData.clients[i].lobbyId){
+                        // the client is in lobby j
+                        for (let k = 0; k < serverData.lobbies[j].players.length; k++){
+                            let p = serverData.lobbies[j].players;
+                            if (p[k].clientId == serverData.clients[i].clientId) {
+                                //the player index is k
+                                console.log(`user in slot ${p[k].slot} removed from lobby for inactivity`);
+                                p.splice(k, 1);
+                                //console.log(serverData.lobbies[j].players.length);
+                                if (p.length == 0){
+                                    serverData.lobbies.splice(j, 1);
+                                    console.log('lobby closed, empty.');
+                                }
+                                else{
+                                    SendLobbyUpdate(serverData.lobbies[j]);
+                                }
+                                break;
+                                
+                            }
+                        }
+                        break; //end lobby/client id match
+                    }
+                }
+                
+            }
+            serverData.clients.splice(i, 1);
+            
+        } else if (lastActivityDelta >= 10000) {
+            sendPing(serverData.clients[i]);
         }
     }
+
 }, (1000));
+
+function sendPing(client) {
+    if (!client || !client.peerRef) {
+        return;
+    }
+
+    const message = {
+        type: "ping"
+    };
+
+    sendResponse(client.peerRef, message, client);
+}
+
+function SendLobbyUpdate(lob){
+    
+    for (let p = 0; p < lob.players.length; p++){
+        //console.log (lob.players[p]);
+        const user = serverData.getUser(lob.players[p].clientId);
+        lob.players[p].slot = p+1;      
+        const message = {
+            type: "lobby_update",
+            lobby: lob
+        };
+        sendResponse(user.peerRef, message, user);
+    }
+    //sendResponse()
+}
 
 function sendResponse(peer, data, client) {
     const jsonResponse = JSON.stringify(data);

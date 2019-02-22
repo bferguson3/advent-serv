@@ -4,4 +4,5 @@ export class GameClient {
     public peerRef: Peer;
     public lastActivity: number;
     public authenticationHash: string;
+    public username: string;
 }

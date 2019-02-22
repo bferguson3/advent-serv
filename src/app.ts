@@ -34,12 +34,11 @@ export class App {
 
                 console.log(`Peer ${peer._pointer} connected`);
         
-                const newClient: GameClient = {
-                    clientId: peer._pointer,
-                    peerRef: peer,
-                    lastActivity: GameUtilities.getUtcTimestamp(),
-                    authenticationHash: null,
-                };
+                const newClient: GameClient = new GameClient();
+                newClient.clientId = peer._pointer;
+                newClient.peerRef = peer;
+                newClient.lastActivity = GameUtilities.getUtcTimestamp();
+                newClient.authenticationHash = null;
 
                 this.serverData.clients.push(newClient);
 

@@ -1,5 +1,5 @@
 import { MesssageHandlerBase } from "./message-handler-base.handler";
-import { GameClient, GameLobby, ServerData } from "../entities";
+import { GameClient, GameLobby, ServerData, LobbyPlayerReference } from "../entities";
 import { GameUtilities } from "../utilities";
 
 export class CreateLobbyHandler extends MesssageHandlerBase {
@@ -26,6 +26,11 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             // TODO: return error
         }
 
+        const playerReference = new LobbyPlayerReference();
+        playerReference.clientId = this.client.clientId;
+        playerReference.user = this.client.username;
+        playerReference.slot = 1;
+
         const lobby: GameLobby = {
             id: GameUtilities.createLobbyId(),
             mapname: mapName,
@@ -34,10 +39,19 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             userId: this.client.clientId,
             playerCount: 1,
             players: [
-                {
-                    
-                }
+                playerReference
             ]
         };
+
+        this.client.lobbyId = lobby.id;
+
+        this.serverData.lobbies.push(lobby);
+
+        const lobbyResponseObject = {
+            type: "lobby",
+            lobby: lobby
+        };
+
+        return lobbyResponseObject;
     }
 }

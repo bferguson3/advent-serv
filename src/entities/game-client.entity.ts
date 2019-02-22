@@ -5,4 +5,5 @@ export class GameClient {
     public lastActivity: number;
     public authenticationHash: string;
     public username: string;
+    public lobbyId: string;
 }

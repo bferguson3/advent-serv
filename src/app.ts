@@ -19,6 +19,8 @@ export class App {
     public gameServer: Host;
 
     public start(): void {
+        console.log("Starting server...");
+
         this.gameServer = createServer({
             address: this.addr,
             peers: this.peerCount,
@@ -61,9 +63,11 @@ export class App {
                     let messageHandler = null;
                 });
             });
+
+            host.start(this.loopIntervalMs);
+            console.info("Server ready on %s:%s", host.address().address, host.address().port);
         });
 
-        this.gameServer.start(this.loopIntervalMs);
         this.maintenanceIntervalHandleId = setInterval(() => {
             this.runMaintenence();
         }, this.maintenanceIntervalPeriod);

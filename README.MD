@@ -3,7 +3,7 @@
 ### Usage
 ```
 npm install
-node index 
+npm run serve
 ```
 
 ### Commands

@@ -3,7 +3,7 @@ import { ServerData, GameClient, IResponseObject } from "./entities";
 import { GameUtilities } from "./utilities";
 import { RequestMessageType, VisibilityLevelType } from "./enums";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler} from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, MapListHandler} from "./message-handlers";
 
 export class App {
 
@@ -77,6 +77,7 @@ export class App {
                                     //basically just do nothing other than update the activity time
                                     return;
                                 case RequestMessageType.RequestMapList:
+                                messageHandler = new MapListHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.RequestCharacterData:
                                     break;

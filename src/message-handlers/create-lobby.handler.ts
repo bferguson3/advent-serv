@@ -15,7 +15,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
 
         if (this.gameObject && this.gameObject.data) {
             if (this.gameObject.data.mapname) {
-                mapName = this.gameObject.data.mapName;
+                mapName = this.gameObject.data.mapname;
             }
 
             if (this.gameObject.data.isLocked) {

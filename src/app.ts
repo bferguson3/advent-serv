@@ -144,9 +144,37 @@ export class App {
         let i = this.serverData.clients.length;
         const currentTime = GameUtilities.getUtcTimestamp();
 
+        const prunedClientIds: string[] = [];
+
         while (i--) {
             if (!this.serverData.clients[i] || currentTime - this.serverData.clients[i].lastActivity >= this.clientInactivityThresholdMs) {
+                prunedClientIds.push(this.serverData.clients[i].clientId);
                 this.serverData.clients.splice(i, 1);
+            }
+        }
+
+        let j = this.serverData.lobbies.length;
+
+        while (j--) {
+            let k = this.serverData.lobbies[j].players.length;
+            let shouldReorderSlots: boolean = false;
+
+            while (k--) {
+                if (prunedClientIds.indexOf(this.serverData.lobbies[j].players[k].clientId) > -1) {
+                    this.serverData.lobbies[j].players.splice(k, 1);
+                    shouldReorderSlots = true;
+                }
+            }
+
+            // no players left in this lobby, remove the lobby
+            if (this.serverData.lobbies[j].players.length === 0) {
+                this.serverData.lobbies.splice(j, 1);
+            } else if (shouldReorderSlots) {
+                // at least one player removed from the lobby, reorder slots
+                // TODO: put this code somehwere more generic
+                for (let l = 0; l < this.serverData.lobbies[j].players.length; l++) {
+                    this.serverData.lobbies[j].players[l].slot = (l + 1);
+                }
             }
         }
     }

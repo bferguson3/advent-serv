@@ -1,6 +1,10 @@
 import { Address, createServer, Host, Packet, Peer}  from "enet";
-import { ServerData, GameClient } from "./entities";
+import { ServerData, GameClient, IResponseObject } from "./entities";
 import { GameUtilities } from "./utilities";
+import { RequestMessageType, VisibilityLevelType } from "./enums";
+import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
+import { CreateLobbyHandler } from "./message-handlers";
+import { JoinLobbyHandler } from "./message-handlers/join-lobby.handler";
 
 export class App {
 
@@ -60,7 +64,61 @@ export class App {
 
                     const messageType = gameObject.message_type;
 
-                    let messageHandler = null;
+                    let messageHandler: MesssageHandlerBase = null;
+
+                    // anonymous handlers (login)
+                    if (messageType === RequestMessageType.Login) {
+                        //login handler goes here
+                    } else {
+                        //non anonymous handlers - check auth hash
+                        //TODO: make sure hash matches
+                        if (client.authenticationHash) {
+                            switch (messageType) {
+                                case RequestMessageType.Pong:
+                                    //basically just do nothing other than update the activity time
+                                    return;
+                                case RequestMessageType.RequestMapList:
+                                    break;
+                                case RequestMessageType.RequestCharacterData:
+                                    break;
+                                case RequestMessageType.ListLobbies:
+                                    break;
+                                case RequestMessageType.CreateLobby:
+                                    messageHandler = new CreateLobbyHandler(gameObject, client, this.serverData);
+                                    break;
+                                case RequestMessageType.JoinLobby:
+                                    messageHandler = new JoinLobbyHandler(gameObject, client, this.serverData);
+                                    break;
+                                case RequestMessageType.LeaveLobby:
+                                    break;
+                                default:
+                                    //TODO: bad message handler
+                                    break;
+                            }
+                        }
+                    }
+
+                    if (messageHandler !== null) {
+                        const responseObject: IResponseObject = messageHandler.handleMessage();
+
+                        if (responseObject) {
+                            if (responseObject.visibility === VisibilityLevelType.Room) {
+                                for (let i = 0; i < this.serverData.lobbies.length; i++) {
+                                    const lobby = this.serverData.lobbies[i];
+
+                                    if (lobby.id === client.lobbyId) {
+                                        for (let playerIndex = 0; playerIndex < lobby.players.length; playerIndex++) {
+                                            const user = this.serverData.getUser(lobby.players[playerIndex].clientId);
+                                            this.sendResponse(user.peerRef, responseObject, user);
+                                        }
+                                        break;
+                                    }
+                                }
+                            } else if (responseObject.visibility === VisibilityLevelType.Private) {
+                                this.sendResponse(peer ,responseObject, client);
+                            }
+                        }
+                    }
                 });
             });
 
@@ -92,7 +150,7 @@ export class App {
         }
     }
 
-    private sendResponse(peer: Peer, data: any, client: GameClient): void {
+    private sendResponse(peer: Peer, data: IResponseObject, client: GameClient): void {
         const jsonResponse = JSON.stringify(data);
         let clientId = "";
 

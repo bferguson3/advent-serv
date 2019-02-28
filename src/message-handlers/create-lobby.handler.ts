@@ -1,6 +1,7 @@
 import { MesssageHandlerBase } from "./message-handler-base.handler";
-import { GameClient, GameLobby, ServerData, LobbyPlayerReference } from "../entities";
+import { GameClient, GameLobby, ServerData, LobbyPlayerReference, IResponseObject } from "../entities";
 import { GameUtilities } from "../utilities";
+import { ResponseMessageType, VisibilityLevelType } from "../enums";
 
 export class CreateLobbyHandler extends MesssageHandlerBase {
 
@@ -8,7 +9,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): any {
+    public handleMessage(): IResponseObject {
         let isLocked: boolean = false;
         let mapName: string = "";
 
@@ -48,7 +49,8 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         this.serverData.lobbies.push(lobby);
 
         const lobbyResponseObject = {
-            type: "lobby",
+            type: ResponseMessageType.Lobby,
+            visibility: VisibilityLevelType.Private,
             lobby: lobby
         };
 

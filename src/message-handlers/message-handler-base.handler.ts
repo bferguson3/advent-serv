@@ -1,4 +1,4 @@
-import { GameClient, ServerData, IResponseObject } from "../entities";
+import { GameClient, IResponseObject, ServerData } from "../entities";
 
 export abstract class MesssageHandlerBase {
     public gameObject: any;

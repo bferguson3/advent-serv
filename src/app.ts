@@ -1,11 +1,14 @@
-import { Address, createServer, Host, Packet, Peer}  from "enet";
-import { ServerData, GameClient, IResponseObject } from "./entities";
-import { GameUtilities } from "./utilities";
+import { Address, createServer, Host, Packet, Peer} from "enet";
+import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, VisibilityLevelType } from "./enums";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, MapListHandler, RequestCharacterDataHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, MapListHandler, RequestCharacterDataHandler, ListLobbiesHandler} from "./message-handlers";
+import { GameUtilities } from "./utilities";
 
 export class App {
+
+    public serverData: ServerData = new ServerData();
+    public gameServer: Host;
 
     private addr = new Address("0.0.0.0", 9521);
     private peerCount: number = 32;
@@ -16,10 +19,6 @@ export class App {
     private maintenanceIntervalHandleId: number;
     private maintenanceIntervalPeriod: number = 1000;
     private clientInactivityThresholdMs: number = 60000;
-
-    public serverData: ServerData = new ServerData();
-
-    public gameServer: Host;
 
     public start(): void {
         console.log("Starting server...");
@@ -38,7 +37,7 @@ export class App {
             host.on("connect", (peer: Peer, data: any) => {
 
                 console.log(`Peer ${peer._pointer} connected`);
-        
+
                 const newClient: GameClient = new GameClient();
                 newClient.clientId = peer._pointer;
                 newClient.peerRef = peer;
@@ -67,20 +66,20 @@ export class App {
 
                     // anonymous handlers (login)
                     if (messageType === RequestMessageType.Login) {
-                        //login handler goes here
+                        // login handler goes here
                     } else {
-                        //non anonymous handlers - check auth hash
-                        //TODO: make sure hash matches
+                        // non anonymous handlers - check auth hash
+                        // TODO: make sure hash matches
                         if (client.authenticationHash) {
                             switch (messageType) {
                                 case RequestMessageType.Pong:
-                                    //basically just do nothing other than update the activity time
+                                    // basically just do nothing other than update the activity time
                                     return;
                                 case RequestMessageType.RequestMapList:
                                     messageHandler = new MapListHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.RequestCharacterData:
-                                    messageHandler = new RequestCharacterDataHandler(gameObject, client, this.serverData)
+                                    messageHandler = new RequestCharacterDataHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.ListLobbies:
                                     messageHandler = new ListLobbiesHandler(gameObject, client, this.serverData);
@@ -95,7 +94,7 @@ export class App {
                                     messageHandler = new LeaveLobbyHandler(gameObject, client, this.serverData);
                                     break;
                                 default:
-                                    //TODO: bad message handler
+                                    // TODO: bad message handler
                                     break;
                             }
                         }
@@ -106,19 +105,18 @@ export class App {
 
                         if (responseObject) {
                             if (responseObject.visibility === VisibilityLevelType.Room) {
-                                for (let i = 0; i < this.serverData.lobbies.length; i++) {
-                                    const lobby = this.serverData.lobbies[i];
+                                for (const lobby of this.serverData.lobbies) {
 
                                     if (lobby.id === client.lobbyId) {
-                                        for (let playerIndex = 0; playerIndex < lobby.players.length; playerIndex++) {
-                                            const user = this.serverData.getUser(lobby.players[playerIndex].clientId);
+                                        for (const player of lobby.players) {
+                                            const user = this.serverData.getUser(player.clientId);
                                             this.sendResponse(user.peerRef, responseObject, user);
                                         }
                                         break;
                                     }
                                 }
                             } else if (responseObject.visibility === VisibilityLevelType.Private) {
-                                this.sendResponse(peer ,responseObject, client);
+                                this.sendResponse(peer, responseObject, client);
                             }
                         }
                     }

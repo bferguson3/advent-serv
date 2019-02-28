@@ -1,7 +1,7 @@
-import { MesssageHandlerBase } from "./message-handler-base.handler";
-import { GameClient, GameLobby, ServerData, LobbyPlayerReference, IResponseObject } from "../entities";
-import { GameUtilities } from "../utilities";
+import { GameClient, GameLobby, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { GameUtilities } from "../utilities";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class CreateLobbyHandler extends MesssageHandlerBase {
 

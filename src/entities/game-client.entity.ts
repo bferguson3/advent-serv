@@ -1,5 +1,5 @@
 import { Peer } from "enet";
-export class GameClient { 
+export class GameClient {
     public clientId: string;
     public peerRef: Peer;
     public lastActivity: number;

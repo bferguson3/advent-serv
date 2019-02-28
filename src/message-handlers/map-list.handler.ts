@@ -1,6 +1,6 @@
-import { MesssageHandlerBase } from "./message-handler-base.handler";
-import { GameClient, ServerData, IResponseObject } from "../entities";
+import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class MapListHandler extends MesssageHandlerBase {
 
@@ -15,7 +15,7 @@ export class MapListHandler extends MesssageHandlerBase {
             clientId: this.client.clientId,
             value: "MAP01"
         };
-    
+
         return mapListObject;
     }
 }

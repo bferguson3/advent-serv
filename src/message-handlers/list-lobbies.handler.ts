@@ -1,6 +1,6 @@
-import { MesssageHandlerBase } from "./message-handler-base.handler";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class ListLobbiesHandler extends MesssageHandlerBase {
 
@@ -11,7 +11,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
     }
 
     public handleMessage(): IResponseObject {
-        
+
         let page = 0;
 
         if (this.gameObject && this.gameObject.data && this.gameObject.data.page) {
@@ -23,7 +23,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
         const endNum = startNum + this.LOBBIES_PER_PAGE;
 
         for (let i = startNum; i < endNum; i++) {
-            if (this.serverData.lobbies.length >= i+1) {
+            if (this.serverData.lobbies.length >= i + 1) {
                 lobbies.push(this.serverData.lobbies[i]);
             }
         }

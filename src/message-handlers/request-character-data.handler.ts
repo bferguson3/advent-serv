@@ -1,7 +1,7 @@
-import { MesssageHandlerBase } from "./message-handler-base.handler";
-import { IResponseObject, GameClient, ServerData, PlayerData } from "../entities";
-import { PlayerService } from "../services";
+import { GameClient, IResponseObject, PlayerData, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { PlayerService } from "../services";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class RequestCharacterDataHandler extends MesssageHandlerBase {
     constructor(gameObject: any, client: GameClient, serverData: ServerData) {
@@ -10,10 +10,10 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
 
     public handleMessage(): IResponseObject {
         const tempPlayer: PlayerData = {
-            name: 'Filius',
-            sheet: 'assets/filius_sheet.png',
+            name: "Filius",
+            sheet: "assets/filius_sheet.png",
             level: 1,
-            currentClass: 'jester',
+            currentClass: "jester",
             classLevel: 0,
             clvl: {
                 jester: 1,
@@ -30,10 +30,10 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
             mmp: 0,
             equipment: {}
         };
-    
+
         const playerStats = PlayerService.calculateStats(tempPlayer);
         PlayerService.populatePlayerStats(tempPlayer, playerStats);
-        
+
         // TODO: this will be pulled from a local database
         const playerResponse = {
             type: ResponseMessageType.PlayerData,
@@ -41,7 +41,7 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
             clientId: this.client.clientId,
             value: tempPlayer
         };
-    
+
         return playerResponse;
     }
 }

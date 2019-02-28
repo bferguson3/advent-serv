@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, MapListHandler, RequestCharacterDataHandler } from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, MapListHandler, RequestCharacterDataHandler, LoginHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { GameUtilities } from "./utilities";
 
@@ -66,7 +66,7 @@ export class App {
 
                     // anonymous handlers (login)
                     if (messageType === RequestMessageType.Login) {
-                        // login handler goes here
+                        messageHandler = new LoginHandler(gameObject, client, this.serverData);
                     } else {
                         // non anonymous handlers - check auth hash
                         // TODO: make sure hash matches

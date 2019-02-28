@@ -1,4 +1,7 @@
 export enum ResponseMessageType {
+    // login shit
+    Login = "login_response",
+
     // lobby details
     Lobby = "lobby",
 

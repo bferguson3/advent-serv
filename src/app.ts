@@ -3,8 +3,7 @@ import { ServerData, GameClient, IResponseObject } from "./entities";
 import { GameUtilities } from "./utilities";
 import { RequestMessageType, VisibilityLevelType } from "./enums";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { CreateLobbyHandler } from "./message-handlers";
-import { JoinLobbyHandler } from "./message-handlers/join-lobby.handler";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler} from "./message-handlers";
 
 export class App {
 
@@ -90,6 +89,7 @@ export class App {
                                     messageHandler = new JoinLobbyHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.LeaveLobby:
+                                    messageHandler = new LeaveLobbyHandler(gameObject, client, this.serverData);
                                     break;
                                 default:
                                     //TODO: bad message handler

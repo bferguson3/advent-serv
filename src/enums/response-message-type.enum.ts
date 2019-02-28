@@ -1,4 +1,5 @@
 export enum ResponseMessageType {
-    Lobby = "lobby",
-    JoinedLobby = "joined_lobby"
+    Lobby = "lobby", // lobby details
+    JoinedLobby = "joined_lobby", // player joined lobby
+    PlayerLeft = "player_left" // player left lobby
 }

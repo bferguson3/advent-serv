@@ -13,4 +13,7 @@ export enum ResponseMessageType {
 
     // single player data with stats calc'ed for current class
     PlayerData = "player_data",
+
+    // get list of active lobbies
+    LobbyList = "lobby_list"
 }

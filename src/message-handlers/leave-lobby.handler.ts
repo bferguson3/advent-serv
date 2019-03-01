@@ -7,7 +7,7 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
         const clientId = this.client.clientId;
 
         let lobbyId = null;
@@ -64,6 +64,6 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
             lobby: curLobby
         };
 
-        return lobbyLeftObject;
+        return [lobbyLeftObject];
     }
 }

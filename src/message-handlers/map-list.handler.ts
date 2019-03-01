@@ -8,7 +8,7 @@ export class MapListHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
         const mapListObject = {
             type: ResponseMessageType.MapList,
             visibility: VisibilityLevelType.Private,
@@ -16,6 +16,6 @@ export class MapListHandler extends MesssageHandlerBase {
             value: "MAP01"
         };
 
-        return mapListObject;
+        return [mapListObject];
     }
 }

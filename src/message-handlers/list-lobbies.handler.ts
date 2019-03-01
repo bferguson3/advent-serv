@@ -10,7 +10,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
 
         let page = 0;
 
@@ -39,6 +39,6 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
             lobbies: this.serverData.lobbies
         };
 
-        return lobbyResponseObject;
+        return [lobbyResponseObject];
     }
 }

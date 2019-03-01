@@ -8,7 +8,7 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
         const tempPlayer: PlayerData = {
             name: "Filius",
             sheet: "assets/filius_sheet.png",
@@ -42,6 +42,6 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
             value: tempPlayer
         };
 
-        return playerResponse;
+        return [playerResponse];
     }
 }

@@ -7,7 +7,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
         let lobbyId = "";
         let joinedLobby = null;
         let pslot = 0;
@@ -50,6 +50,6 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
             roomslot: pslot
         };
 
-        return lobbyResponseObject;
+        return [lobbyResponseObject];
     }
 }

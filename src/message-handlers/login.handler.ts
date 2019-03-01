@@ -7,7 +7,7 @@ export class LoginHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
 
         let loginResponseValue: boolean;
 
@@ -28,6 +28,6 @@ export class LoginHandler extends MesssageHandlerBase {
             value: loginResponseValue.toString()
         };
 
-        return loginResponseObject;
+        return [loginResponseObject];
     }
 }

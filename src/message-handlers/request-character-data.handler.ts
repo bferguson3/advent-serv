@@ -9,37 +9,18 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
     }
 
     public handleMessage(): IResponseObject[] {
-        const tempPlayer: PlayerData = {
-            name: "Filius",
-            sheet: "assets/filius_sheet.png",
-            level: 1,
-            currentClass: "jester",
-            classLevel: 0,
-            clvl: {
-                jester: 1,
-                warrior: 1,
-                priest: 1,
-                thief: 1,
-                mage: 1,
-                budoka: 1,
-            },
-            str: 0,
-            agi: 0,
-            int: 0,
-            mhp: 0,
-            mmp: 0,
-            equipment: {}
-        };
 
-        const playerStats = PlayerService.calculateStats(tempPlayer);
-        PlayerService.populatePlayerStats(tempPlayer, playerStats);
+        for (const player of this.client.playerData) {
+            const stats = PlayerService.calculateStats(player);
+            PlayerService.populatePlayerStats(player, stats);
+        }
 
         // TODO: this will be pulled from a local database
         const playerResponse = {
             type: ResponseMessageType.PlayerData,
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
-            value: tempPlayer
+            value: this.client.playerData
         };
 
         return [playerResponse];

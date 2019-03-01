@@ -11,5 +11,5 @@ export abstract class MesssageHandlerBase {
         this.serverData = serverData;
     }
 
-    public abstract handleMessage(): IResponseObject;
+    public abstract handleMessage(): IResponseObject[];
 }

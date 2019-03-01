@@ -101,22 +101,28 @@ export class App {
                     }
 
                     if (messageHandler !== null) {
-                        const responseObject: IResponseObject = messageHandler.handleMessage();
+                        const responseObjects: IResponseObject[] = messageHandler.handleMessage();
 
-                        if (responseObject) {
-                            if (responseObject.visibility === VisibilityLevelType.Room) {
-                                for (const lobby of this.serverData.lobbies) {
-
-                                    if (lobby.id === client.lobbyId) {
-                                        for (const player of lobby.players) {
-                                            const user = this.serverData.getUser(player.clientId);
-                                            this.sendResponse(user.peerRef, responseObject, user);
-                                        }
-                                        break;
-                                    }
+                        if (responseObjects) {
+                            for (const responseObject of responseObjects) {
+                                if (!responseObject) {
+                                    continue;
                                 }
-                            } else if (responseObject.visibility === VisibilityLevelType.Private) {
-                                this.sendResponse(peer, responseObject, client);
+
+                                if (responseObject.visibility === VisibilityLevelType.Room) {
+                                    for (const lobby of this.serverData.lobbies) {
+
+                                        if (lobby.id === client.lobbyId) {
+                                            for (const player of lobby.players) {
+                                                const user = this.serverData.getUser(player.clientId);
+                                                this.sendResponse(user.peerRef, responseObject, user);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } else if (responseObject.visibility === VisibilityLevelType.Private) {
+                                    this.sendResponse(peer, responseObject, client);
+                                }
                             }
                         }
                     }

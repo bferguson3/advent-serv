@@ -9,7 +9,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject {
+    public handleMessage(): IResponseObject[] {
         let isLocked: boolean = false;
         let mapName: string = "";
 
@@ -54,6 +54,6 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             lobby: lobby
         };
 
-        return lobbyResponseObject;
+        return [lobbyResponseObject];
     }
 }

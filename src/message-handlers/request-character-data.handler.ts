@@ -8,7 +8,7 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
 
         for (const player of this.client.playerData) {
             const stats = PlayerService.calculateStats(player);

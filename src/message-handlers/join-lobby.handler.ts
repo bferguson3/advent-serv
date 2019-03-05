@@ -7,7 +7,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
         let lobbyId = "";
         let joinedLobby = null;
         let pslot = 0;

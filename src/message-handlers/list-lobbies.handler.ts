@@ -10,7 +10,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
 
         let page = 0;
 

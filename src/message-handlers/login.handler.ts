@@ -1,77 +1,69 @@
+import * as pbkdf2 from "pbkdf2";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { DataLoadService } from "../services";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class LoginHandler extends MesssageHandlerBase {
+    private static DEFAULT_ENCODING: string = "base64";
+
     constructor(gameObject: any, client: GameClient, serverData: ServerData) {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
 
-        let loginResponseValue: boolean;
+        try {
+            const userValue = await DataLoadService.loadUserData(this.gameObject.data.player_username);
 
-        // TODO: really authenticate, maybe?
-        if (this.gameObject.data.player_username === "guest" && this.gameObject.data.password === "password") {
-            loginResponseValue = true;
+            // check auth hash
+            if (!userValue || !userValue.currentPasswordData) {
+                return this.sendRejection();
+            }
 
-            this.client.username = this.gameObject.data.player_username;
-            this.client.authenticationHash = "PUTAHASHHERE"; // TOOD: put a hash here
+            const hash = this.createAuthHash(
+                this.gameObject.data.password,
+                userValue.currentPasswordData.passwordSalt
+            );
 
-            // TODO: load in player data instead of randomly creating it
-            this.client.playerData = [
-                {
-                    name: "Filius",
-                    sheet: "assets/filius_sheet.png",
-                    level: 1,
-                    currentClass: "jester",
-                    classLevel: 0,
-                    clvl: {
-                        jester: 1,
-                        warrior: 1,
-                        priest: 1,
-                        thief: 1,
-                        mage: 1,
-                        budoka: 1,
-                    },
-                    str: 0,
-                    agi: 0,
-                    int: 0,
-                    mhp: 0,
-                    mmp: 0,
-                    equipment: {}
-                },
-                {
-                    name: "Juno",
-                    sheet: "assets/juno_sheet.png",
-                    level: 1,
-                    currentClass: "warrior",
-                    classLevel: 0,
-                    clvl: {
-                        jester: 1,
-                        warrior: 1,
-                        priest: 1,
-                        thief: 1,
-                        mage: 1,
-                        budoka: 1,
-                    },
-                    str: 0,
-                    agi: 0,
-                    int: 0,
-                    mhp: 0,
-                    mmp: 0,
-                    equipment: {}
-                }
-            ];
-        } else {
-            loginResponseValue = false;
+            if (hash === userValue.currentPasswordData.passwordHash) {
+
+                userValue.lastLoginDate = new Date(new Date().toISOString());
+                await DataLoadService.saveUserData(userValue);
+
+                this.client.username = userValue.username;
+                this.client.authenticationHash = "PUTAHASHHERE"; // TOOD: put a hash here
+                this.client.playerData = userValue.playerData;
+
+                const loginResponseObject = {
+                    type: ResponseMessageType.Login,
+                    visibility: VisibilityLevelType.Private,
+                    clientId: this.client.clientId,
+                    value: (true).toString()
+                };
+
+                return [loginResponseObject];
+            }
+
+            return this.sendRejection();
+        } catch {
+            return this.sendRejection();
         }
+    }
 
+    private createAuthHash(password: string, salt: string): string {
+        // TODO: async this
+        // TODO: append system wide secret to pw
+        const result = pbkdf2.pbkdf2Sync(password, salt, 100, 64, "sha512");
+        return result.toString(LoginHandler.DEFAULT_ENCODING);
+    }
+
+    private sendRejection(): IResponseObject[] {
         const loginResponseObject = {
             type: ResponseMessageType.Login,
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
-            value: loginResponseValue.toString()
+            value: (false).toString()
         };
 
         return [loginResponseObject];

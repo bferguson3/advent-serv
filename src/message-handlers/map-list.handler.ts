@@ -8,7 +8,7 @@ export class MapListHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
         const mapListObject = {
             type: ResponseMessageType.MapList,
             visibility: VisibilityLevelType.Private,

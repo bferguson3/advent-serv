@@ -7,7 +7,7 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
         const clientId = this.client.clientId;
 
         let lobbyId = null;

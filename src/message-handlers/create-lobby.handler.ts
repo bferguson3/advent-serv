@@ -9,7 +9,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         super(gameObject, client, serverData);
     }
 
-    public handleMessage(): IResponseObject[] {
+    public async handleMessage(): Promise<IResponseObject[]> {
         let isLocked: boolean = false;
         let mapName: string = "";
 

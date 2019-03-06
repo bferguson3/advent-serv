@@ -3,11 +3,11 @@ import { ClassType } from "../enums/class-type.enum";
 
 export class PlayerService {
     public static populatePlayerStats(player: PlayerData, stats: PlayerStats): void {
-        player.str = stats.str;
-        player.agi = stats.agi;
-        player.int = stats.int;
-        player.mhp = stats.mhp;
-        player.mmp = stats.mmp;
+        player.str = stats.str ? stats.str : 0;
+        player.agi = stats.agi ? stats.agi : 0;
+        player.int = stats.int ? stats.int : 0;
+        player.mhp = stats.mhp ? stats.mhp : 0;
+        player.mmp = stats.mmp ? stats.mmp : 0;
         player.classLevel = stats.classLevel;
     }
 
@@ -36,11 +36,14 @@ export class PlayerService {
             multiplier = 1 + ((player.clvl.jester - 1) / 9);
         }
 
-        cPlayer.str = Math.floor(cPlayer.str * multiplier);
-        cPlayer.agi = Math.floor(cPlayer.agi * multiplier);
-        cPlayer.int = Math.floor(cPlayer.int * multiplier);
-        cPlayer.mhp = Math.floor(cPlayer.mhp * multiplier);
-        cPlayer.mmp = Math.floor(cPlayer.mmp * multiplier);
+        if (multiplier > 0) {
+            cPlayer.str = Math.floor(cPlayer.str * multiplier);
+            cPlayer.agi = Math.floor(cPlayer.agi * multiplier);
+            cPlayer.int = Math.floor(cPlayer.int * multiplier);
+            cPlayer.mhp = Math.floor(cPlayer.mhp * multiplier);
+            cPlayer.mmp = Math.floor(cPlayer.mmp * multiplier);
+        }
+
         cPlayer.classLevel = player.clvl[currentClass];
         cPlayer.class = currentClass;
 

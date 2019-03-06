@@ -1,5 +1,6 @@
 import { PlayerData, PlayerStats } from "../entities";
 import { ClassType } from "../enums/class-type.enum";
+import { cpus } from "os";
 
 export class PlayerService {
     public static populatePlayerStats(player: PlayerData, stats: PlayerStats): void {
@@ -31,9 +32,44 @@ export class PlayerService {
             cPlayer.str = (6 + (player.level / 2));
             cPlayer.agi = (6 + player.level);
             cPlayer.int = (4 + (player.level / 2));
-            cPlayer.mhp = (15 + ((cPlayer.str + cPlayer.agi) / 2));
+            cPlayer.mhp = (15 + ((cPlayer.str + cPlayer.agi) / 2)) + (3 * player.level);
             cPlayer.mmp = (2 + (cPlayer.int / 2) + player.level);
             multiplier = 1 + ((player.clvl.jester - 1) / 9);
+        } else if (currentClass === ClassType.Warrior) {
+            cPlayer.str = (8 + (player.level));
+            cPlayer.agi = (5 + (player.level / 3));
+            cPlayer.int = (3 + (player.level / 3));
+            cPlayer.mhp = (19 + ((cPlayer.str + cPlayer.agi))) + (4 * player.level);
+            cPlayer.mmp = 0;
+            multiplier = 1 + ((player.clvl.warrior - 1) / 9);
+        } else if (currentClass === ClassType.Thief) {
+            cPlayer.str = (6 + (player.level / 1.5));
+            cPlayer.agi = (8 + (player.level / 0.75));
+            cPlayer.int = (3 + (player.level / 2.25));
+            cPlayer.mhp = (11 + (cPlayer.str + cPlayer.agi) / 2) + (2.5 * player.level);
+            cPlayer.mmp = (2 + (cPlayer.int / 2) + (0.5 * player.level));
+            multiplier = 1 + ((player.clvl.thief - 1) / 9);
+        } else if (currentClass === ClassType.Priest) {
+            cPlayer.str = (2 + (player.level / 2));
+            cPlayer.agi = (5 + (player.level / 2.5));
+            cPlayer.int = (8 + (player.level / 1.5));
+            cPlayer.mhp = (9 + (cPlayer.str + cPlayer.agi) / 2) + (2.25 * player.level);
+            cPlayer.mmp = (5 + (cPlayer.int / 1.5) + (3 * player.level));
+            multiplier = 1 + ((player.clvl.priest - 1) / 9);
+        } else if (currentClass === ClassType.Mage) {
+            cPlayer.str = (3 + (player.level / 3));
+            cPlayer.agi = (6 + (player.level / 3));
+            cPlayer.int = (11 + (player.level / 1.25));
+            cPlayer.mhp = (7 + (cPlayer.str + cPlayer.agi) / 2.5) + (2 * player.level);
+            cPlayer.mmp = (5 + (cPlayer.int / 1.5) + (4 * player.level));
+            multiplier = 1 + ((player.clvl.mage - 1) / 9);
+        } else if (currentClass === ClassType.Budoka) {
+            cPlayer.str = (8 + (player.level / 0.8));
+            cPlayer.agi = (5 + (player.level));
+            cPlayer.int = (4 + (player.level / 3));
+            cPlayer.mhp = (18 + (cPlayer.str + cPlayer.agi) / 1.5) + (3.5 * player.level);
+            cPlayer.mmp = 0;
+            multiplier = 1 + ((player.clvl.mage - 1) / 9);
         }
 
         if (multiplier > 0) {

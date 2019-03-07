@@ -21,5 +21,8 @@ export enum ResponseMessageType {
     LobbyList = "lobby_list",
 
     // self explanatory
-    Ping = "ping"
+    Ping = "ping",
+
+    // trying to join a full lobby
+    LobbyFull = "lobby_full"
 }

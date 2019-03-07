@@ -29,6 +29,7 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
                         break;
                     }
                 }
+                break;
             }
         }
 

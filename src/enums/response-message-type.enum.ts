@@ -20,6 +20,9 @@ export enum ResponseMessageType {
     // get list of active lobbies
     LobbyList = "lobby_list",
 
-    // self explanatory
-    Ping = "ping"
+    // expects 'pong' in response
+    Ping = "ping",
+
+    // contains minimal char info to broadcast to whole lobby
+    UpdateLobbyCharacter = "update_lobby_character"
 }

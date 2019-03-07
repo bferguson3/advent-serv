@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler } from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { GameUtilities } from "./utilities";
 
@@ -94,6 +94,8 @@ export class App {
                                 case RequestMessageType.LeaveLobby:
                                     messageHandler = new LeaveLobbyHandler(gameObject, client, this.serverData);
                                     break;
+                                case RequestMessageType.SelectLobbyCharacter:
+                                    messageHandler = new UpdateLobbyCharacterHandler(gameObject, client, this.serverData);
                                 default:
                                     // TODO: bad message handler
                                     break;

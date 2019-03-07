@@ -6,5 +6,6 @@ export enum RequestMessageType {
     ListLobbies = "list_lobbies",
     CreateLobby = "create_lobby",
     JoinLobby = "join_lobby",
-    LeaveLobby = "leave_lobby"
+    LeaveLobby = "leave_lobby",
+    SelectLobbyCharacter = "select_lobby_character"
 }

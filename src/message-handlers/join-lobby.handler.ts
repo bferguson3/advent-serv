@@ -36,7 +36,8 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
                 lobby.players.push({
                     clientId: this.client.clientId,
                     user: this.client.username,
-                    slot: pslot
+                    slot: pslot,
+                    currentChar: '(none)'
                 });
 
                 // keep current id on the client

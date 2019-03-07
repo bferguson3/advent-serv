@@ -1,6 +1,5 @@
 import { PlayerData, PlayerStats } from "../entities";
 import { ClassType } from "../enums/class-type.enum";
-import { cpus } from "os";
 
 export class PlayerService {
     public static populatePlayerStats(player: PlayerData, stats: PlayerStats): void {

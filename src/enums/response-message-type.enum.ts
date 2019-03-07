@@ -18,5 +18,8 @@ export enum ResponseMessageType {
     PlayerData = "player_data",
 
     // get list of active lobbies
-    LobbyList = "lobby_list"
+    LobbyList = "lobby_list",
+
+    // self explanatory
+    Ping = "ping"
 }

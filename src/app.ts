@@ -1,6 +1,6 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
-import { RequestMessageType, VisibilityLevelType } from "./enums";
+import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { GameUtilities } from "./utilities";
@@ -19,6 +19,7 @@ export class App {
     private maintenanceIntervalHandleId: number;
     private maintenanceIntervalPeriod: number = 1000;
     private clientInactivityThresholdMs: number = 60000;
+    private clientPingThresholdMs: number = 10000;
 
     public start(): void {
         console.log("Starting server...");
@@ -152,14 +153,22 @@ export class App {
 
     private runMaintenence(): void {
         let i = this.serverData.clients.length;
-        const currentTime = GameUtilities.getUtcTimestamp();
 
         const prunedClientIds: string[] = [];
 
         while (i--) {
-            if (!this.serverData.clients[i] || currentTime - this.serverData.clients[i].lastActivity >= this.clientInactivityThresholdMs) {
-                prunedClientIds.push(this.serverData.clients[i].clientId);
+            if (!this.serverData.clients[i]) {
                 this.serverData.clients.splice(i, 1);
+            } else {
+                const currentTime = GameUtilities.getUtcTimestamp();
+                const lastActivityDelta = currentTime - this.serverData.clients[i].lastActivity;
+
+                if (lastActivityDelta >= this.clientInactivityThresholdMs) {
+                    prunedClientIds.push(this.serverData.clients[i].clientId);
+                    this.serverData.clients.splice(i, 1);
+                } else if (lastActivityDelta >= this.clientPingThresholdMs) {
+                    this.sendPing(this.serverData.clients[i]);
+                }
             }
         }
 
@@ -187,6 +196,20 @@ export class App {
                 }
             }
         }
+    }
+
+    private sendPing(client: GameClient): void {
+        if (!client || !client.peerRef) {
+            return;
+        }
+
+        const message = {
+            type: ResponseMessageType.Ping,
+            visibility: VisibilityLevelType.Private
+        };
+
+        this.sendResponse(client.peerRef, message, client);
+        console.log("Ping sent");
     }
 
     private sendResponse(peer: Peer, data: IResponseObject, client: GameClient): void {

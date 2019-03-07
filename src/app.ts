@@ -209,7 +209,6 @@ export class App {
         };
 
         this.sendResponse(client.peerRef, message, client);
-        console.log("Ping sent");
     }
 
     private sendResponse(peer: Peer, data: IResponseObject, client: GameClient): void {
@@ -221,6 +220,11 @@ export class App {
         }
 
         peer.send(0, jsonResponse, (err: any) => {
+            // don't log if ping
+            if (data.type === ResponseMessageType.Ping) {
+                return;
+            }
+
             if (err) {
                 console.log("Error sending packet");
             } else {

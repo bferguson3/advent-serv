@@ -24,5 +24,8 @@ export enum ResponseMessageType {
     Ping = "ping",
 
     // contains minimal char info to broadcast to whole lobby
-    UpdateLobbyCharacter = "update_lobby_character"
+    UpdateLobbyCharacter = "update_lobby_character",
+
+    // trying to join a full lobby
+    LobbyFull = "lobby_full"
 }

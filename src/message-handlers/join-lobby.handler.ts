@@ -37,7 +37,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
                     clientId: this.client.clientId,
                     user: this.client.username,
                     slot: pslot,
-                    currentChar: '(none)'
+                    currentChar: null
                 });
 
                 // keep current id on the client

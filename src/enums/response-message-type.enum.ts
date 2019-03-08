@@ -27,5 +27,8 @@ export enum ResponseMessageType {
     UpdateLobbyCharacter = "update_lobby_character",
 
     // trying to join a full lobby
-    LobbyFull = "lobby_full"
+    LobbyFull = "lobby_full",
+
+    // sends an approval to start a lobby
+    StartGame = "start_game"
 }

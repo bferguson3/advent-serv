@@ -6,3 +6,4 @@ export { LoginHandler } from "./login.handler";
 export { MapListHandler } from "./map-list.handler";
 export { RequestCharacterDataHandler } from "./request-character-data.handler";
 export { UpdateLobbyCharacterHandler } from "./update-lobby-char.handler";
+export { StartGameHandler } from "./start-game.handler";

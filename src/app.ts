@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, UpdateLobbyCharacterHandler, StartGameHandler } from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { GameUtilities } from "./utilities";
 
@@ -157,6 +157,7 @@ export class App {
         this.gameServer.stop();
     }
 
+    // TODO: make this async so it doesn't block anything else
     private runMaintenence(): void {
         let i = this.serverData.clients.length;
 
@@ -196,9 +197,27 @@ export class App {
                 this.serverData.lobbies.splice(j, 1);
             } else if (shouldReorderSlots) {
                 // at least one player removed from the lobby, reorder slots
-                // TODO: put this code somehwere more generic
+                // send notification to other players in lobby
                 for (let l = 0; l < this.serverData.lobbies[j].players.length; l++) {
                     this.serverData.lobbies[j].players[l].slot = (l + 1);
+
+                    // find the player ref
+                    for (const client of this.serverData.clients) {
+                        if (client.clientId === this.serverData.lobbies[j].players[l].clientId) {
+
+                            const responseObject = {
+                                visibility: VisibilityLevelType.Private,
+                                type: ResponseMessageType.PlayerIdleDrop,
+                                lobby: this.serverData.lobbies[j]
+                            };
+
+                            this.sendResponse(
+                                client.peerRef,
+                                responseObject,
+                                client
+                            );
+                        }
+                    }
                 }
             }
         }

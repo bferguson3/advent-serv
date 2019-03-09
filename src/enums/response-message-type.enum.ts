@@ -30,5 +30,8 @@ export enum ResponseMessageType {
     LobbyFull = "lobby_full",
 
     // sends an approval to start a lobby
-    StartGame = "start_game"
+    StartGame = "start_game",
+
+    // a player in the same lobby dropped for being idle
+    PlayerIdleDrop = "player_idle_drop"
 }

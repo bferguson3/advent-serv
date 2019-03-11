@@ -25,9 +25,11 @@ export class App {
     public async start(): Promise<void> {
         console.log("Loading Tiles...");
         this.serverData.tiles = await MapService.loadTileData();
+        console.log(`${this.serverData.tiles.length} Tiles Loaded`);
 
         console.log("Loading Maps...");
-        this.serverData.maps = await MapService.loadAllMaps();
+        this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
+        console.log(`${this.serverData.maps.length} Maps Loaded`);
 
         console.log("Starting Server...");
 

@@ -8,7 +8,7 @@ export class MapService {
     public static MAP_DATA_PATH: string = "./map-data";
     public static TILE_FILE_NAME: string = "tiledata";
 
-    public static async loadAllMaps(): Promise<MapData[]> {
+    public static async loadAllMaps(tileData: TileData[]): Promise<MapData[]> {
         const maps: MapData[] = [];
 
         for (const mapType in MapType) {
@@ -20,6 +20,17 @@ export class MapService {
             const map = await this.loadMap(mapTypeInstance);
 
             if (map) {
+                for (const boardItem of map.Board) {
+                    if (boardItem) {
+                        for (const tile of tileData) {
+                            if (boardItem.TileType === tile.Id) {
+                                boardItem.TileData = tile;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 maps.push(map);
             }
         }

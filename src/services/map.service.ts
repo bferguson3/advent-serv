@@ -1,15 +1,15 @@
 import * as fs from "fs";
-import { MapBoardItem, MapData } from "../entities";
+import { MapBoardItem, MapData, TileData } from "../entities";
 import { MapType } from "../enums";
 
 export class MapService {
 
     // TODO: load in from env
     public static MAP_DATA_PATH: string = "./map-data";
+    public static TILE_FILE_NAME: string = "tiledata";
 
     public static async loadAllMaps(): Promise<MapData[]> {
         const maps: MapData[] = [];
-        const keys = Object.keys(MapType);
 
         for (const mapType in MapType) {
             if (!mapType) {
@@ -27,6 +27,33 @@ export class MapService {
         return maps;
     }
 
+    public static async loadTileData(): Promise<TileData[]> {
+        let tileBlob: any = null;
+
+        try {
+            const tiles: TileData[] = [];
+
+            tileBlob = await this.readTileData();
+
+            for (const tileProp in tileBlob) {
+                if (!tileBlob.hasOwnProperty(tileProp)) {
+                    continue;
+                }
+
+                const tileData = this.convertFromTileBlob(tileProp, tileBlob[tileProp]);
+
+                if (tileData) {
+                    tiles.push(tileData);
+                }
+            }
+
+            return tiles;
+        } catch {
+            return null;
+        }
+    }
+
+    // Loading Map Data
     private static async loadMap(mapType: MapType): Promise<MapData> {
         let mapBlob: any = null;
 
@@ -84,5 +111,36 @@ export class MapService {
         }
 
         return boardItems;
+    }
+
+    // Loading Tile Data
+    private static readTileData(): Promise<any> {
+        const path = `${MapService.MAP_DATA_PATH}/${MapService.TILE_FILE_NAME}.json`;
+
+        const promise = new Promise<any>((resolve, reject) => {
+            fs.readFile(path, "utf8", (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    const tileData = JSON.parse(data);
+                    resolve(tileData);
+                }
+            });
+        });
+
+        return promise;
+    }
+
+    private static convertFromTileBlob(id: string, tileBlob: any): TileData {
+        const tileData = new TileData();
+
+        tileData.Id = id;
+        tileData.Name = tileBlob.name;
+        tileData.Description = tileBlob.description;
+        tileData.TreasureRate = tileBlob.treasure_rate;
+        tileData.EncounterRate = tileBlob.enc_rate;
+        tileData.ImagePath = tileBlob.imagepath;
+
+        return tileData;
     }
 }

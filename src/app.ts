@@ -23,6 +23,9 @@ export class App {
     private clientPingThresholdMs: number = 10000;
 
     public async start(): Promise<void> {
+        console.log("Loading Tiles...");
+        this.serverData.tiles = await MapService.loadTileData();
+
         console.log("Loading Maps...");
         this.serverData.maps = await MapService.loadAllMaps();
 

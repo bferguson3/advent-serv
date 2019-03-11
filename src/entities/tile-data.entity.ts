@@ -4,4 +4,5 @@ export class TileData {
     public TreasureRate: number;
     public EncounterRate: number;
     public Name: string;
+    public Id: string;
 }

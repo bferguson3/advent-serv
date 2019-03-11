@@ -33,5 +33,8 @@ export enum ResponseMessageType {
     StartGame = "start_game",
 
     // a player in the same lobby dropped for being idle
-    PlayerIdleDrop = "player_idle_drop"
+    PlayerIdleDrop = "player_idle_drop",
+
+    // a player requested a die roll
+    DiceRollResult = "dice_roll_result"
 }

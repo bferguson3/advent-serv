@@ -52,14 +52,14 @@ export class PlayerService {
             cPlayer.str = (2 + (player.level / 2));
             cPlayer.agi = (5 + (player.level / 2.5));
             cPlayer.int = (8 + (player.level / 1.5));
-            cPlayer.mhp = (9 + (cPlayer.str + cPlayer.agi) / 2) + (2.25 * player.level);
+            cPlayer.mhp = (9 + (cPlayer.str + cPlayer.agi) / 2) + (2.5 * player.level);
             cPlayer.mmp = (5 + (cPlayer.int / 1.5) + (3 * player.level));
             multiplier = 1 + ((player.clvl.priest - 1) / 9);
         } else if (currentClass === ClassType.Mage) {
             cPlayer.str = (3 + (player.level / 3));
             cPlayer.agi = (6 + (player.level / 3));
             cPlayer.int = (11 + (player.level / 1.25));
-            cPlayer.mhp = (7 + (cPlayer.str + cPlayer.agi) / 2.5) + (2 * player.level);
+            cPlayer.mhp = (7 + (cPlayer.str + cPlayer.agi) / 2.5) + (2.5 * player.level);
             cPlayer.mmp = (5 + (cPlayer.int / 1.5) + (4 * player.level));
             multiplier = 1 + ((player.clvl.mage - 1) / 9);
         } else if (currentClass === ClassType.Budoka) {

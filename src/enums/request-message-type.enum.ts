@@ -8,5 +8,6 @@ export enum RequestMessageType {
     JoinLobby = "join_lobby",
     LeaveLobby = "leave_lobby",
     SelectLobbyCharacter = "select_lobby_character",
-    StartGameRequest = "start_game_request"
+    StartGameRequest = "start_game_request",
+    RollDice = "roll_dice"
 }

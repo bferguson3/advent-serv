@@ -40,3 +40,8 @@ Below is a list of commands and the data expected along with each one.
 * `leave_lobby`
 
     - `lobbyId`
+
+* `roll_dice`
+
+    - `count (optional - will default to 1)`
+    - `sides (optional - will default to 6)`

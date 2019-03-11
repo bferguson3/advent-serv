@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { GameUtilities } from "./utilities";
 
@@ -99,6 +99,9 @@ export class App {
                                     break;
                                 case RequestMessageType.StartGameRequest:
                                     messageHandler = new StartGameHandler(gameObject, client, this.serverData);
+                                    break;
+                                case RequestMessageType.RollDice:
+                                    messageHandler = new RollDiceHandler(gameObject, client, this.serverData);
                                     break;
                                 default:
                                     // TODO: bad message handler

@@ -12,29 +12,26 @@ export class StartGameHandler extends MesssageHandlerBase {
     public async handleMessage(): Promise<IResponseObject[]> {
         let approval = true;
         const lobbyId = this.gameObject.data.lobbyId;
-        const mapId = this.gameObject.data.map;
 
         let mapData: any = null;
 
-        if (mapId) {
-            for (const map of this.serverData.maps) {
-                if (map.Name === mapId) {
-                    mapData = MapService.convertToMapBlob(map);
-                    break;
-                }
-            }
-
-            for (const lobby of this.serverData.lobbies) {
-                // TODO proper error message handling here
-                if (lobby.id === lobbyId) {
-                    for (const player of lobby.players) {
-                        if (!player.currentChar) {
-                            approval = false;
-                        }
+        for (const lobby of this.serverData.lobbies) {
+            // TODO proper error message handling here
+            if (lobby.id === lobbyId) {
+                for (const map of this.serverData.maps) {
+                    if (map.Name === lobby.mapname) {
+                        mapData = MapService.convertToMapBlob(map);
+                        break;
                     }
-
-                    break;
                 }
+
+                for (const player of lobby.players) {
+                    if (!player.currentChar) {
+                        approval = false;
+                    }
+                }
+
+                break;
             }
         }
 

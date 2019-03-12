@@ -1,4 +1,7 @@
 import { App } from "./src/app";
 
 const app = new App();
-app.start();
+
+app.start().then(() => {
+    console.log("Async Loading Complete");
+});

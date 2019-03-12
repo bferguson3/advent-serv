@@ -3,6 +3,7 @@ import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
+import { MapService } from "./services/map.service";
 import { GameUtilities } from "./utilities";
 
 export class App {
@@ -21,8 +22,16 @@ export class App {
     private clientInactivityThresholdMs: number = 60000;
     private clientPingThresholdMs: number = 10000;
 
-    public start(): void {
-        console.log("Starting server...");
+    public async start(): Promise<void> {
+        console.log("Loading Tiles...");
+        this.serverData.tiles = await MapService.loadTileData();
+        console.log(`${this.serverData.tiles.length} Tiles Loaded`);
+
+        console.log("Loading Maps...");
+        this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
+        console.log(`${this.serverData.maps.length} Maps Loaded`);
+
+        console.log("Starting Server...");
 
         this.gameServer = createServer({
             address: this.addr,

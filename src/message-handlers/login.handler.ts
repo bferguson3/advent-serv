@@ -2,6 +2,7 @@ import * as pbkdf2 from "pbkdf2";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { DataLoadService } from "../services";
+import { MapService } from "../services/map.service";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class LoginHandler extends MesssageHandlerBase {
@@ -35,11 +36,14 @@ export class LoginHandler extends MesssageHandlerBase {
                 this.client.authenticationHash = "PUTAHASHHERE"; // TOOD: put a hash here
                 this.client.playerData = userValue.playerData;
 
+                // also send full array of tile data along with login
+
                 const loginResponseObject = {
                     type: ResponseMessageType.Login,
                     visibility: VisibilityLevelType.Private,
                     clientId: this.client.clientId,
-                    value: (true).toString()
+                    value: (true).toString(),
+                    tileData: MapService.convertToTileBlob(this.serverData.tiles)
                 };
 
                 return [loginResponseObject];

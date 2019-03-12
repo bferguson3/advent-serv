@@ -64,6 +64,45 @@ export class MapService {
         }
     }
 
+    public static convertToMapBlob(mapData: MapData): any {
+        const returnData: any = {};
+
+        returnData.name = mapData.Name;
+        returnData.stars = mapData.Stars;
+
+        returnData.board = [];
+
+        for (const boardItem of mapData.Board) {
+            returnData.board.push({
+                x: boardItem.X,
+                y: boardItem.Y,
+                spaceNo: boardItem.SpaceNumber,
+                tileType: boardItem.TileType
+            });
+        }
+
+        // TODO: update this when treasure table structure gets defined
+        returnData.treasure_table = mapData.TreasureTable;
+
+        return returnData;
+    }
+
+    public static convertToTileBlob(tileData: TileData[]): any {
+        const returnData: any = {};
+
+        for (const data of tileData) {
+            returnData[data.Id] = {
+                name: data.Name,
+                description: data.Description,
+                treasure_rate: data.TreasureRate,
+                enc_rate: data.EncounterRate,
+                imagepath: data.ImagePath
+            };
+        }
+
+        return returnData;
+    }
+
     // Loading Map Data
     private static async loadMap(mapType: MapType): Promise<MapData> {
         let mapBlob: any = null;

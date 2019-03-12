@@ -1,5 +1,6 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { MapService } from "../services/map.service";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class StartGameHandler extends MesssageHandlerBase {
@@ -11,26 +12,37 @@ export class StartGameHandler extends MesssageHandlerBase {
     public async handleMessage(): Promise<IResponseObject[]> {
         let approval = true;
         const lobbyId = this.gameObject.data.lobbyId;
+        const mapId = this.gameObject.data.map;
 
-        for (let i = 0; i < this.serverData.lobbies.length; i++) {
+        let mapData: any = null;
 
-            const lobby = this.serverData.lobbies[i];
-
-            // TODO proper error message handling here
-            if (lobby.id === lobbyId) {
-                for (let j = 0; j < lobby.players.length; j++) {
-                    if (!lobby.players[j].currentChar) {
-                        approval = false;
-                    }
+        if (mapId) {
+            for (const map of this.serverData.maps) {
+                if (map.Name === mapId) {
+                    mapData = MapService.convertToMapBlob(map);
+                    break;
                 }
             }
-            break;
+
+            for (const lobby of this.serverData.lobbies) {
+                // TODO proper error message handling here
+                if (lobby.id === lobbyId) {
+                    for (const player of lobby.players) {
+                        if (!player.currentChar) {
+                            approval = false;
+                        }
+                    }
+
+                    break;
+                }
+            }
         }
-        
+
         const gameStarterObject = {
             type: ResponseMessageType.StartGame,
             visibility: VisibilityLevelType.Room,
-            value: approval
+            value: approval,
+            mapData: mapData
         };
 
         return [gameStarterObject];

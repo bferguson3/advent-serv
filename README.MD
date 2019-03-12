@@ -1,5 +1,7 @@
 # Dragoon Dice Chronicle - Server
 
+[![Build status](https://joshlbeard.visualstudio.com/dqc-sugoroku-server/_apis/build/status/dqc-sugoroku-server-CI?branchName=master)](https://joshlbeard.visualstudio.com/dqc-sugoroku-server/_build/latest?definitionId=12)
+
 ### Usage
 ```
 npm install

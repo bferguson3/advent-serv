@@ -1,5 +1,5 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { MapType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class MapListHandler extends MesssageHandlerBase {
@@ -9,11 +9,19 @@ export class MapListHandler extends MesssageHandlerBase {
     }
 
     public async handleMessage(): Promise<IResponseObject[]> {
+        const maps: string[] = [];
+
+        for (const map in MapType) {
+            if (map) {
+                maps.push(map);
+            }
+        }
+
         const mapListObject = {
             type: ResponseMessageType.MapList,
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
-            value: "MAP01"
+            value: maps
         };
 
         return [mapListObject];

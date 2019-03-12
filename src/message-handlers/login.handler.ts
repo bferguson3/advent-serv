@@ -1,6 +1,6 @@
 import * as pbkdf2 from "pbkdf2";
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { MapType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { DataLoadService } from "../services";
 import { MapService } from "../services/map.service";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -36,14 +36,26 @@ export class LoginHandler extends MesssageHandlerBase {
                 this.client.authenticationHash = "PUTAHASHHERE"; // TOOD: put a hash here
                 this.client.playerData = userValue.playerData;
 
-                // also send full array of tile data along with login
+                const maps: string[] = [];
+
+                for (const map in MapType) {
+                    if (map) {
+                        maps.push(map);
+                    }
+                }
+
+                // Data with login:
+                // - clientId: id of client object,
+                // - tileData: data for all tiles to display
+                // - maps: a list of all available map names
 
                 const loginResponseObject = {
                     type: ResponseMessageType.Login,
                     visibility: VisibilityLevelType.Private,
                     clientId: this.client.clientId,
                     value: (true).toString(),
-                    tileData: MapService.convertToTileBlob(this.serverData.tiles)
+                    tileData: MapService.convertToTileBlob(this.serverData.tiles),
+                    maps: maps
                 };
 
                 return [loginResponseObject];

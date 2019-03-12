@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, MapListHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
+import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { MapService } from "./services/map.service";
 import { GameUtilities } from "./utilities";
@@ -85,9 +85,6 @@ export class App {
                                 case RequestMessageType.Pong:
                                     // basically just do nothing other than update the activity time
                                     return;
-                                case RequestMessageType.RequestMapList:
-                                    messageHandler = new MapListHandler(gameObject, client, this.serverData);
-                                    break;
                                 case RequestMessageType.RequestCharacterData:
                                     messageHandler = new RequestCharacterDataHandler(gameObject, client, this.serverData);
                                     break;

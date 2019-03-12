@@ -11,9 +11,6 @@ export enum ResponseMessageType {
     // player left lobby
     PlayerLeft = "player_left",
 
-    // list of maps
-    MapList = "map_list",
-
     // single player data with stats calc'ed for current class
     PlayerData = "player_data",
 

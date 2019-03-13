@@ -1,3 +1,4 @@
+import { GameLobbyModel } from "../client-models";
 import { GameClient, GameLobby, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { GameUtilities } from "../utilities";
@@ -51,7 +52,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         const lobbyResponseObject = {
             type: ResponseMessageType.Lobby,
             visibility: VisibilityLevelType.Private,
-            lobby: lobby
+            lobby: new GameLobbyModel(lobby)
         };
 
         return [lobbyResponseObject];

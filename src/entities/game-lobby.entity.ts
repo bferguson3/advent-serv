@@ -1,3 +1,4 @@
+import { GameState } from "./game-state.entity";
 import { LobbyPlayerReference } from "./lobby-player-reference.entity";
 
 export class GameLobby {
@@ -8,4 +9,5 @@ export class GameLobby {
     public userId: string;
     public playerCount: number;
     public players: LobbyPlayerReference[];
+    public gameState: GameState;
 }

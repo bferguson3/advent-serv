@@ -42,7 +42,8 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             playerCount: 1,
             players: [
                 playerReference
-            ]
+            ],
+            gameState: null
         };
 
         this.client.lobbyId = lobby.id;

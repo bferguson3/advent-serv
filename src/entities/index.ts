@@ -1,5 +1,6 @@
 export { GameClient } from "./game-client.entity";
 export { GameLobby } from "./game-lobby.entity";
+export { GameState } from "./game-state.entity";
 export { IResponseObject } from "./i-response-object.interface";
 export { LobbyPlayerReference } from "./lobby-player-reference.entity";
 export { MapBoardItem } from "./map-board-item.entity";

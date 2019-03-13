@@ -33,5 +33,8 @@ export enum ResponseMessageType {
     PlayerIdleDrop = "player_idle_drop",
 
     // a player requested a die roll
-    DiceRollResult = "dice_roll_result"
+    DiceRollResult = "dice_roll_result",
+
+    // get the current game state
+    GameState = "game_state"
 }

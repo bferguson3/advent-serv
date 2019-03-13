@@ -1,3 +1,4 @@
+import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -61,7 +62,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
             lobbyResponseObject = {
                 type: ResponseMessageType.JoinedLobby,
                 visibility: VisibilityLevelType.Room,
-                lobby: joinedLobby,
+                lobby: new GameLobbyModel(joinedLobby),
                 roomslot: pslot
             };
         } else if (responseType === ResponseMessageType.LobbyFull) {

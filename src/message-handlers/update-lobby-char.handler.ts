@@ -1,3 +1,4 @@
+import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -41,7 +42,7 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
         const updateLobbyCharObject = {
             type: ResponseMessageType.UpdateLobbyCharacter,
             visibility: VisibilityLevelType.Room,
-            lobby: curLobby
+            lobby: new GameLobbyModel(curLobby)
         };
 
         return [updateLobbyCharObject];

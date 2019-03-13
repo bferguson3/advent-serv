@@ -1,3 +1,4 @@
+import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -61,7 +62,7 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
         const lobbyLeftObject = {
             type: ResponseMessageType.PlayerLeft,
             visibility: VisibilityLevelType.Room,
-            lobby: curLobby
+            lobby: new GameLobbyModel(curLobby)
         };
 
         return [lobbyLeftObject];

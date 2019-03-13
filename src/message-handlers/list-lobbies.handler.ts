@@ -1,3 +1,4 @@
+import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -18,13 +19,13 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
             page = this.gameObject.data.page;
         }
 
-        const lobbies = [];
+        const lobbies: GameLobbyModel[] = [];
         const startNum = page * this.LOBBIES_PER_PAGE;
         const endNum = startNum + this.LOBBIES_PER_PAGE;
 
         for (let i = startNum; i < endNum; i++) {
             if (this.serverData.lobbies.length >= i + 1) {
-                lobbies.push(this.serverData.lobbies[i]);
+                lobbies.push(new GameLobbyModel(this.serverData.lobbies[i]));
             }
         }
 
@@ -36,7 +37,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
                 ? 1
                 : Math.ceil(this.serverData.lobbies.length / this.LOBBIES_PER_PAGE),
             totalCount: this.serverData.lobbies.length,
-            lobbies: this.serverData.lobbies
+            lobbies: lobbies
         };
 
         return [lobbyResponseObject];

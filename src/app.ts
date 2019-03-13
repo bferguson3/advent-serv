@@ -1,4 +1,5 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
+import { GameLobbyModel } from "./client-models";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { CreateLobbyHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
@@ -217,7 +218,7 @@ export class App {
                             const responseObject = {
                                 visibility: VisibilityLevelType.Private,
                                 type: ResponseMessageType.PlayerIdleDrop,
-                                lobby: this.serverData.lobbies[j]
+                                lobby: new GameLobbyModel(this.serverData.lobbies[j])
                             };
 
                             this.sendResponse(

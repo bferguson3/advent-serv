@@ -47,10 +47,14 @@ export class App {
 
             host.on("connect", (peer: Peer, data: any) => {
 
-                console.log(`Peer ${peer._pointer} connected`);
+                const newClientId = GameUtilities.createClientId();
+
+                console.log(`Peer ${peer._pointer} connected and given ${newClientId}`);
+
+                peer.clientId = newClientId;
 
                 const newClient: GameClient = new GameClient();
-                newClient.clientId = peer._pointer;
+                newClient.clientId = newClientId;
                 newClient.peerRef = peer;
                 newClient.lastActivity = GameUtilities.getUtcTimestamp();
                 newClient.authenticationHash = null;
@@ -58,7 +62,7 @@ export class App {
                 this.serverData.clients.push(newClient);
 
                 peer.on("message", (packet: Packet, channel: number) => {
-                    const clientId = peer._pointer;
+                    const clientId = peer.clientId;
                     const client = this.serverData.getUser(clientId);
 
                     // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity

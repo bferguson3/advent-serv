@@ -43,9 +43,9 @@ export class StartGameHandler extends MesssageHandlerBase {
         gameState.current_turn = 1;
         gameState.flags = [];
 
-        // start all players at 0 pos
+        // start all players at tile 1
         for (const player of matchingLobby.players) {
-            gameState.player_positions.push(0);
+            gameState.player_positions.push(1);
         }
 
         if (!mapData || !matchingLobby) {

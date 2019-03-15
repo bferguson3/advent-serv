@@ -1,8 +1,9 @@
+import { GenderType } from "../enums";
 import { PlayerClassLevels } from "./player-class-levels.entity";
 
 export class PlayerData {
     public name: string;
-    public sheet: string;
+    public gender: GenderType;
     public level: number;
     public currentClass: string;
     public classLevel: number;

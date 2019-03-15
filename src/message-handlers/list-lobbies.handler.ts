@@ -13,10 +13,15 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
 
     public async handleMessage(): Promise<IResponseObject[]> {
 
-        let page = 0;
+        let page = 1;
 
         if (this.gameObject && this.gameObject.data && this.gameObject.data.page) {
             page = this.gameObject.data.page;
+        }
+
+        // page is not 0 based
+        if (page > 0) {
+            page--;
         }
 
         const lobbies: GameLobbyModel[] = [];

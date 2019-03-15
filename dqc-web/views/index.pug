@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  div(class='content')
+    h4 Players
+
+    ul 
+      each val, index in files
+        li
+          a(href='/users/' + val.link)= val.name

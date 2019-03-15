@@ -55,23 +55,39 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
             return null;
         }
 
-        let lobbyResponseObject: any;
+        const lobbyResponse: IResponseObject[] = [];
 
         // would be better to combine these somehow
         if (responseType === ResponseMessageType.JoinedLobby) {
-            lobbyResponseObject = {
+            const lobbyModel = new GameLobbyModel(joinedLobby);
+
+            // give player lobby data and room slot
+            const playerResponseObject = {
                 type: ResponseMessageType.JoinedLobby,
-                visibility: VisibilityLevelType.Room,
+                visibility: VisibilityLevelType.Private,
                 lobby: new GameLobbyModel(joinedLobby),
                 roomslot: pslot
             };
+
+            lobbyResponse.push(playerResponseObject);
+
+            // give other players just the lobby info
+            const roomResponseObject = {
+                type: ResponseMessageType.LobbyUpdate,
+                visibility: VisibilityLevelType.Room,
+                lobby: lobbyModel
+            };
+
+            lobbyResponse.push(roomResponseObject);
         } else if (responseType === ResponseMessageType.LobbyFull) {
-            lobbyResponseObject = {
+            const lobbyResponseObject = {
                 type: ResponseMessageType.LobbyFull,
                 visibility: VisibilityLevelType.Private,
             };
+
+            lobbyResponse.push(lobbyResponseObject);
         }
 
-        return [lobbyResponseObject];
+        return lobbyResponse;
     }
 }

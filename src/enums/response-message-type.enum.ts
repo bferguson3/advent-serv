@@ -36,5 +36,8 @@ export enum ResponseMessageType {
     DiceRollResult = "dice_roll_result",
 
     // get the current game state
-    GameState = "game_state"
+    GameState = "game_state",
+
+    // send the current state of the lobby to refresh for connected players
+    LobbyUpdate = "lobby_update"
 }

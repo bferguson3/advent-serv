@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  div(class='content')
+    a(href='/') <- Back
+
+    table(class='player-table')
+        tbody
+            tr
+                td(class='prop') Username 
+                td #{userData.username}
+            tr
+                td(class='prop') Last Login Date
+                td #{userData.lastLoginDate.toString()}
+            tr
+                td(class='prop') Player Data
+                td
+                    each val, index in userData.playerData
+                        span(class='player-name') #{val.name}
+                        ul(class='player-data')
+                            li Level - #{val.level}
+                            li Current Class - #{val.currentClass}
+                            li Class Level - #{val.classLevel}
+

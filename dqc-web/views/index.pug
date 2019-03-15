@@ -1,8 +1,10 @@
 extends layout
 
 block content
-  h5= title
-  p Welcome to #{title}!
-  ul 
-    each val, index in files
-      li= val
+  div(class='content')
+    h4 Players
+
+    ul 
+      each val, index in files
+        li
+          a(href='/users/' + val.link)= val.name

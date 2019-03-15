@@ -4,28 +4,23 @@ var fs = require('fs');
 
 const path = `./user-data/`;
 
+function createLinkHash(fileName) {
+    return encodeURIComponent(Buffer.from(fileName).toString('base64'));
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const files = fs.readdirSync(path);
-  console.log(files);
-  res.render('index', { title: 'Dragoon Dice Chronicle Admin', files: files });
+    const files = fs.readdirSync(path);
+    const playerObjects = [];
+
+    for (let i = 0; i < files.length; i++) {
+        playerObjects.push({
+            name: files[i].split('.')[0],
+            link: createLinkHash(files[i])
+        });
+    }
+
+    res.render('index', { title: 'Dragoon Dice Chronicle Admin', files: playerObjects });
 });
 
 module.exports = router;
-
-/*
-        const path = `${DataLoadService.USER_DATA_PATH}/${username}.json`;
-
-        const promise = new Promise<UserData>((resolve, reject) => {
-            fs.readFile(path, "utf8", (err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    const userData: UserData = JSON.parse(data);
-                    resolve(userData);
-                }
-            });
-        });
-
-        return promise;
-*/

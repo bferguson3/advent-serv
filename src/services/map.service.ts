@@ -69,6 +69,7 @@ export class MapService {
 
         returnData.name = mapData.Name;
         returnData.stars = mapData.Stars;
+        returnData.dice = mapData.Dice;
 
         returnData.board = [];
 
@@ -142,6 +143,7 @@ export class MapService {
         mapData.Board = this.convertFromBoardBlob(mapBlob.board);
         mapData.TreasureTable = mapBlob.treasure_table;
         mapData.Stars = mapBlob.stars;
+        mapData.Dice = mapBlob.dice;
 
         return mapData;
     }

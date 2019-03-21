@@ -6,5 +6,6 @@ export class MapData {
     public Board: MapBoardItem[] = [];
     public Name: string;
     public Stars: number;
+    public Dice: number;
     public MapType: MapType;
 }

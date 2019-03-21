@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import { MapBoardItem, MapData, TileData } from "../entities";
-import { MapType } from "../enums";
 
 export class MapService {
 
@@ -11,13 +10,16 @@ export class MapService {
     public static async loadAllMaps(tileData: TileData[]): Promise<MapData[]> {
         const maps: MapData[] = [];
 
-        for (const mapType in MapType) {
-            if (!mapType) {
+        const mapFiles = await this.readMapDirectory();
+
+        for (const mapProperty in mapFiles) {
+            if (!mapFiles[mapProperty]) {
                 continue;
             }
 
-            const mapTypeInstance: MapType = MapType[mapType] as any as MapType;
-            const map = await this.loadMap(mapTypeInstance);
+            const mapFileName = mapFiles[mapProperty];
+
+            const map = await this.loadMap(mapFileName);
 
             if (map) {
                 for (const boardItem of map.Board) {
@@ -105,14 +107,18 @@ export class MapService {
     }
 
     // Loading Map Data
-    private static async loadMap(mapType: MapType): Promise<MapData> {
+    private static FILENAMES_EXCLUDE_MAP_PARSING: string[] = [
+        "tiledata.json"
+    ];
+
+    private static async loadMap(mapFileName: string): Promise<MapData> {
         let mapBlob: any = null;
 
         try {
-            mapBlob = await this.readMapData(mapType);
+            mapBlob = await this.readMapData(mapFileName);
 
             const mapData = this.convertFromMapBlob(mapBlob);
-            mapData.MapType = mapType;
+            mapData.MapFileName = mapFileName;
 
             return mapData;
         } catch {
@@ -120,8 +126,29 @@ export class MapService {
         }
     }
 
-    private static readMapData(mapType: MapType): Promise<any> {
-        const path = `${MapService.MAP_DATA_PATH}/${mapType}.json`;
+    private static readMapDirectory(): Promise<string[]> {
+        const path = `${MapService.MAP_DATA_PATH}`;
+
+        const promise = new Promise<any>((resolve, reject) => {
+            fs.readdir(path, "utf8", (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    // filter out files we don't want to parse as maps
+                    const fileNames = data.filter((item) =>
+                        MapService.FILENAMES_EXCLUDE_MAP_PARSING.indexOf(item.toLowerCase()) === -1
+                    );
+
+                    resolve(fileNames);
+                }
+            });
+        });
+
+        return promise;
+    }
+
+    private static readMapData(mapFileName: string): Promise<any> {
+        const path = `${MapService.MAP_DATA_PATH}/${mapFileName}`;
 
         const promise = new Promise<any>((resolve, reject) => {
             fs.readFile(path, "utf8", (err, data) => {

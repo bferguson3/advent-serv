@@ -30,6 +30,7 @@ export class App {
 
         console.log("Loading Maps...");
         this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
+        this.serverData.populateMapNames();
         console.log(`${this.serverData.maps.length} Maps Loaded`);
 
         console.log("Starting Server...");

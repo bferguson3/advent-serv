@@ -1,5 +1,7 @@
 export enum ErrorType {
-    InvalidLobby = "Invalid Lobby",
-    InvalidMap = "Invalid Map",
-    InvalidMessageType = "Invalid Request"
+    InvalidLobby = "invalid_lobby",
+    InvalidMap = "invalid_map",
+    InvalidMessageType = "invalid_request_message",
+    ClientTimeout = "client_timeout",
+    GeneralServerError = "general_server_error"
 }

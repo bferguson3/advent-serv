@@ -1,5 +1,5 @@
 import { GameClient, GameLobby, GameState, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MapService } from "../services/map.service";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
@@ -48,9 +48,18 @@ export class StartGameHandler extends MesssageHandlerBase {
             gameState.player_positions.push(1);
         }
 
-        if (!mapData || !matchingLobby) {
-            // TODO: proper error handling here
-            return;
+        if (!mapData) {
+            return this.createError(
+                VisibilityLevelType.Room,
+                ErrorType.InvalidMap
+            );
+        }
+
+        if (!matchingLobby) {
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidLobby
+            );
         }
 
         matchingLobby.gameState = gameState;

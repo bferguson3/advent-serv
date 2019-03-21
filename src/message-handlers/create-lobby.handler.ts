@@ -1,6 +1,6 @@
 import { GameLobbyModel } from "../client-models";
 import { GameClient, GameLobby, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { GameUtilities } from "../utilities";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
@@ -24,8 +24,12 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             }
         }
 
-        if (!mapName) {
-            // TODO: return error
+        const matchingMap = this.serverData.getMatchingMap(mapName);
+
+        if (!matchingMap) {
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidMap);
         }
 
         const playerReference = new LobbyPlayerReference();

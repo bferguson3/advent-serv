@@ -39,5 +39,8 @@ export enum ResponseMessageType {
     GameState = "game_state",
 
     // send the current state of the lobby to refresh for connected players
-    LobbyUpdate = "lobby_update"
+    LobbyUpdate = "lobby_update",
+
+    // generic catch-all error type
+    Error = "error"
 }

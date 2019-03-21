@@ -1,4 +1,5 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 
 export abstract class MesssageHandlerBase {
     public gameObject: any;
@@ -12,4 +13,18 @@ export abstract class MesssageHandlerBase {
     }
 
     public abstract handleMessage(): Promise<IResponseObject[]>;
+
+    protected createError(
+        visibilityLevel: VisibilityLevelType,
+        errorType: ErrorType
+    ): IResponseObject[] {
+
+        const errorResponseObject = {
+            type: ResponseMessageType.Error,
+            visibility: visibilityLevel,
+            error: errorType
+        };
+
+        return [errorResponseObject];
+    }
 }

@@ -33,6 +33,20 @@ export class ServerData {
         this._mapNames = names;
     }
 
+    public getMatchingMap(mapName: string): MapData {
+        if (!mapName) {
+            return null;
+        }
+
+        for (const map of this.maps) {
+            if (map.Name === mapName) {
+                return map;
+            }
+        }
+
+        return null;
+    }
+
     public get mapNames(): string[] {
         return this._mapNames;
     }

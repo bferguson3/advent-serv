@@ -1,6 +1,6 @@
 import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class LeaveLobbyHandler extends MesssageHandlerBase {
@@ -23,9 +23,10 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
         }
 
         if (!lobbyId) {
-            // TODO: return error
-            console.log(`${clientId} tried to leave a lobby, but didn't give a lobbyId`);
-            return null;
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidLobby
+            );
         }
 
         for (let i = 0; i < this.serverData.lobbies.length; i++) {

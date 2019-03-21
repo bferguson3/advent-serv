@@ -1,6 +1,6 @@
 import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
@@ -10,21 +10,17 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
     }
 
     public async handleMessage(): Promise<IResponseObject[]> {
-        // TODO: error checking if an invalid/nonexistant lobby is passed by the client.
-        // possibly rework public lobby broadcasts to only require lobbyId
+        // TODO: possibly rework public lobby broadcasts to only require lobbyId
         const lobbyId = this.gameObject.data.lobbyId;
         let curLobby = null;
         const clientId = this.client.clientId;
 
         // assign data from GO to lobby-player
-        for (let i = 0; i < this.serverData.lobbies.length; i++) {
-
-            const lobby = this.serverData.lobbies[i];
-
+        for (const lobby of this.serverData.lobbies) {
             if (lobby.id === lobbyId) {
-                for (let j = 0; j < lobby.players.length; j++) {
-                    if (lobby.players[j].clientId === clientId) {
-                        lobby.players[j].currentChar = this.client.playerData[this.gameObject.data.characterNo];
+                for (const player of lobby.players) {
+                    if (player.clientId === clientId) {
+                        player.currentChar = this.client.playerData[this.gameObject.data.characterNo];
                         curLobby = lobby;
                         break;
                     }
@@ -34,9 +30,10 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
         }
 
         if (!curLobby) {
-            // TODO flesh this out?
-            console.log("No lobby found for update character request");
-            return null;
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidLobby
+            );
         }
 
         const updateLobbyCharObject = {

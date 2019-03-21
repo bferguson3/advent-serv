@@ -1,3 +1,4 @@
+export { BadMessageHandler } from "./bad-message.handler";
 export { CreateLobbyHandler } from "./create-lobby.handler";
 export { GameStateHandler } from "./game-state.handler";
 export { JoinLobbyHandler} from "./join-lobby.handler";

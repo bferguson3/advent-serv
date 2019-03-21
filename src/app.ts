@@ -1,11 +1,10 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameLobbyModel } from "./client-models";
 import { GameClient, IResponseObject, ServerData } from "./entities";
-import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
+import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
+import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { MapService } from "./services/map.service";
-import { GameUtilities } from "./utilities";
+import { MapService, ServerService } from "./services";
 
 export class App {
 
@@ -24,14 +23,24 @@ export class App {
     private clientPingThresholdMs: number = 10000;
 
     public async start(): Promise<void> {
-        console.log("Loading Tiles...");
-        this.serverData.tiles = await MapService.loadTileData();
-        console.log(`${this.serverData.tiles.length} Tiles Loaded`);
+        try {
+            console.log("Loading Tiles...");
+            this.serverData.tiles = await MapService.loadTileData();
+            console.log(`${this.serverData.tiles.length} Tiles Loaded`);
+        } catch (err) {
+            console.log("Error loading tiles", err);
+            throw err;
+        }
 
-        console.log("Loading Maps...");
-        this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
-        this.serverData.populateMapNames();
-        console.log(`${this.serverData.maps.length} Maps Loaded`);
+        try {
+            console.log("Loading Maps...");
+            this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
+            this.serverData.populateMapNames();
+            console.log(`${this.serverData.maps.length} Maps Loaded`);
+        } catch (err) {
+            console.log("Error loading maps", err);
+            throw err;
+        }
 
         console.log("Starting Server...");
 
@@ -43,12 +52,13 @@ export class App {
             up: this.upLimit
         }, (err: any, host: Host) => {
             if (err) {
+                console.log("Error starting server", err);
                 return;
             }
 
             host.on("connect", (peer: Peer, data: any) => {
 
-                const newClientId = GameUtilities.createClientId();
+                const newClientId = ServerService.createClientId();
 
                 console.log(`Peer ${peer._pointer} connected and given ${newClientId}`);
 
@@ -57,7 +67,7 @@ export class App {
                 const newClient: GameClient = new GameClient();
                 newClient.clientId = newClientId;
                 newClient.peerRef = peer;
-                newClient.lastActivity = GameUtilities.getUtcTimestamp();
+                newClient.lastActivity = ServerService.getUtcTimestamp();
                 newClient.authenticationHash = null;
 
                 this.serverData.clients.push(newClient);
@@ -66,12 +76,13 @@ export class App {
                     const clientId = peer.clientId;
                     const client = this.serverData.getUser(clientId);
 
-                    // TODO: send back some nasty message saying they need to reconnect because they've been dropped for inactivity
                     if (!client) {
+                        const error = ServerService.createErrorMessage(VisibilityLevelType.Private, ErrorType.ClientTimeout);
+                        this.sendResponse(peer, error[0], null);
                         return;
                     }
 
-                    client.lastActivity = GameUtilities.getUtcTimestamp();
+                    client.lastActivity = ServerService.getUtcTimestamp();
                     const gameObject = JSON.parse(packet.data().toString());
 
                     console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
@@ -119,41 +130,53 @@ export class App {
                                     messageHandler = new GameStateHandler(gameObject, client, this.serverData);
                                     break;
                                 default:
-                                    // TODO: bad message handler
+                                    messageHandler = new BadMessageHandler(gameObject, client, this.serverData);
                                     break;
                             }
                         }
                     }
 
-                    if (messageHandler !== null) {
-                        const responseObjectsPromise: Promise<IResponseObject[]> = messageHandler.handleMessage();
+                    try {
+                        if (messageHandler !== null) {
+                            const responseObjectsPromise: Promise<IResponseObject[]> = messageHandler.handleMessage();
 
-                        responseObjectsPromise.then((responseObjects: IResponseObject[]) => {
-                            if (responseObjects) {
-                                for (const responseObject of responseObjects) {
-                                    if (!responseObject) {
-                                        continue;
-                                    }
-
-                                    if (responseObject.visibility === VisibilityLevelType.Room) {
-                                        for (const lobby of this.serverData.lobbies) {
-
-                                            if (lobby.id === client.lobbyId) {
-                                                for (const player of lobby.players) {
-                                                    const user = this.serverData.getUser(player.clientId);
-                                                    this.sendResponse(user.peerRef, responseObject, user);
-                                                }
-                                                break;
-                                            }
+                            responseObjectsPromise.then((responseObjects: IResponseObject[]) => {
+                                if (responseObjects) {
+                                    for (const responseObject of responseObjects) {
+                                        if (!responseObject) {
+                                            continue;
                                         }
-                                    } else if (responseObject.visibility === VisibilityLevelType.Private) {
-                                        this.sendResponse(peer, responseObject, client);
+
+                                        if (responseObject.visibility === VisibilityLevelType.Room) {
+                                            for (const lobby of this.serverData.lobbies) {
+
+                                                if (lobby.id === client.lobbyId) {
+                                                    for (const player of lobby.players) {
+                                                        const user = this.serverData.getUser(player.clientId);
+                                                        this.sendResponse(user.peerRef, responseObject, user);
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        } else if (responseObject.visibility === VisibilityLevelType.Private) {
+                                            this.sendResponse(peer, responseObject, client);
+                                        }
                                     }
                                 }
-                            }
-                        }, (rejectionReason) => {
-                            // do something with an error here
-                        });
+                            }, (rejectionReason) => {
+                                const errors = ServerService.createErrorMessage(
+                                    VisibilityLevelType.Private,
+                                    ErrorType.GeneralServerError);
+
+                                this.sendResponse(peer, errors[0], client);
+                            });
+                        }
+                    } catch (err) {
+                        const errors = ServerService.createErrorMessage(
+                            VisibilityLevelType.Private,
+                            ErrorType.GeneralServerError);
+
+                        this.sendResponse(peer, errors[0], client);
                     }
                 });
             });
@@ -185,7 +208,7 @@ export class App {
             if (!this.serverData.clients[i]) {
                 this.serverData.clients.splice(i, 1);
             } else {
-                const currentTime = GameUtilities.getUtcTimestamp();
+                const currentTime = ServerService.getUtcTimestamp();
                 const lastActivityDelta = currentTime - this.serverData.clients[i].lastActivity;
 
                 if (lastActivityDelta >= this.clientInactivityThresholdMs) {

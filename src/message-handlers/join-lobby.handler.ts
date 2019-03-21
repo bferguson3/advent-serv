@@ -1,6 +1,6 @@
 import { GameLobbyModel } from "../client-models";
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class JoinLobbyHandler extends MesssageHandlerBase {
@@ -21,8 +21,10 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
         }
 
         if (!lobbyId) {
-            // TODO: return error
-            return null;
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidLobby
+            );
         }
 
         for (const lobby of this.serverData.lobbies) {

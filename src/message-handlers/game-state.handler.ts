@@ -1,5 +1,5 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class GameStateHandler extends MesssageHandlerBase {
@@ -24,7 +24,9 @@ export class GameStateHandler extends MesssageHandlerBase {
             }
         }
 
-        // TODO: error checking if an invalid/nonexistant lobby is passed by the client.
-        return [];
+        return this.createError(
+            VisibilityLevelType.Private,
+            ErrorType.InvalidLobby
+        );
     }
 }

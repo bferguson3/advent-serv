@@ -1,4 +1,7 @@
-export abstract class GameUtilities {
+import { IResponseObject } from "../entities";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
+
+export class ServerService {
     public static getUtcTimestamp(): number {
         const now = new Date();
 
@@ -21,6 +24,20 @@ export abstract class GameUtilities {
 
     public static createLobbyId(): string {
         return this.createRandomId(12);
+    }
+
+    public static createErrorMessage(
+        visibilityLevel: VisibilityLevelType,
+        errorType: ErrorType
+    ): IResponseObject[] {
+
+        const errorResponseObject = {
+            type: ResponseMessageType.Error,
+            visibility: visibilityLevel,
+            error: errorType
+        };
+
+        return [errorResponseObject];
     }
 
     private static createRandomId(length: number): string {

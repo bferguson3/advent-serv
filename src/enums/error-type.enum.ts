@@ -1,3 +1,4 @@
 export enum ErrorType {
-    InvalidMap = "Invalid Map"
+    InvalidMap = "Invalid Map",
+    InvalidMessageType = "Invalid Request"
 }

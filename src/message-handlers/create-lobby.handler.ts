@@ -1,7 +1,7 @@
 import { GameLobbyModel } from "../client-models";
 import { GameClient, GameLobby, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
 import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
-import { GameUtilities } from "../utilities";
+import { ServerService } from "../services";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class CreateLobbyHandler extends MesssageHandlerBase {
@@ -38,7 +38,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         playerReference.slot = 1;
 
         const lobby: GameLobby = {
-            id: GameUtilities.createLobbyId(),
+            id: ServerService.createLobbyId(),
             mapname: mapName,
             isLocked: isLocked,
             user: this.client.username,

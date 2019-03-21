@@ -4,8 +4,7 @@ import { GameClient, IResponseObject, ServerData } from "./entities";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { MapService } from "./services/map.service";
-import { GameUtilities } from "./utilities";
+import { MapService, ServerService } from "./services";
 
 export class App {
 
@@ -48,7 +47,7 @@ export class App {
 
             host.on("connect", (peer: Peer, data: any) => {
 
-                const newClientId = GameUtilities.createClientId();
+                const newClientId = ServerService.createClientId();
 
                 console.log(`Peer ${peer._pointer} connected and given ${newClientId}`);
 
@@ -57,7 +56,7 @@ export class App {
                 const newClient: GameClient = new GameClient();
                 newClient.clientId = newClientId;
                 newClient.peerRef = peer;
-                newClient.lastActivity = GameUtilities.getUtcTimestamp();
+                newClient.lastActivity = ServerService.getUtcTimestamp();
                 newClient.authenticationHash = null;
 
                 this.serverData.clients.push(newClient);
@@ -71,7 +70,7 @@ export class App {
                         return;
                     }
 
-                    client.lastActivity = GameUtilities.getUtcTimestamp();
+                    client.lastActivity = ServerService.getUtcTimestamp();
                     const gameObject = JSON.parse(packet.data().toString());
 
                     console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
@@ -185,7 +184,7 @@ export class App {
             if (!this.serverData.clients[i]) {
                 this.serverData.clients.splice(i, 1);
             } else {
-                const currentTime = GameUtilities.getUtcTimestamp();
+                const currentTime = ServerService.getUtcTimestamp();
                 const lastActivityDelta = currentTime - this.serverData.clients[i].lastActivity;
 
                 if (lastActivityDelta >= this.clientInactivityThresholdMs) {

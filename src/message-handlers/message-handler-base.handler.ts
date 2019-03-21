@@ -1,5 +1,6 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
+import { ErrorType, VisibilityLevelType } from "../enums";
+import { ServerService } from "../services";
 
 export abstract class MesssageHandlerBase {
     public gameObject: any;
@@ -18,13 +19,6 @@ export abstract class MesssageHandlerBase {
         visibilityLevel: VisibilityLevelType,
         errorType: ErrorType
     ): IResponseObject[] {
-
-        const errorResponseObject = {
-            type: ResponseMessageType.Error,
-            visibility: visibilityLevel,
-            error: errorType
-        };
-
-        return [errorResponseObject];
+        return ServerService.createErrorMessage(visibilityLevel, errorType);
     }
 }

@@ -1,5 +1,6 @@
 import { GameClient } from "./game-client.entity";
 import { GameLobby } from "./game-lobby.entity";
+import { GameState } from "./game-state.entity";
 import { MapData } from "./map-data.entity";
 import { TileData } from "./tile-data.entity";
 
@@ -49,5 +50,25 @@ export class ServerData {
 
     public get mapNames(): string[] {
         return this._mapNames;
+    }
+
+    public getLobby(lobbyId: string): GameLobby {
+        for (const lobby of this.lobbies) {
+            if (lobby.id === lobbyId) {
+                return lobby;
+            }
+        }
+
+        return null;
+    }
+
+    public getGameState(lobbyId: string): GameState {
+        const lobby = this.getLobby(lobbyId);
+
+        if (lobby) {
+            return lobby.gameState;
+        }
+
+        return null;
     }
 }

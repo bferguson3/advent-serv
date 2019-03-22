@@ -1,5 +1,5 @@
-import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { GameClient, IResponseObject, RollResult, ServerData } from "../entities";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { GameService } from "../services/game.service";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
@@ -11,29 +11,57 @@ export class RollDiceHandler extends MesssageHandlerBase {
 
     public async handleMessage(): Promise<IResponseObject[]> {
 
-        let numDice: number = 1;
-        let numSides: number = 6;
-
-        if (this.gameObject && this.gameObject.data) {
-            if (this.gameObject.data.count) {
-                numDice = this.gameObject.data.count;
-            }
-
-            if (this.gameObject.data.sides) {
-                numSides = this.gameObject.data.sides;
-            }
+        if (!this.gameObject || !this.gameObject.data || !this.gameObject.data.dicetype) {
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.InvalidDiceType
+            );
         }
 
-        const result = GameService.rollDice(numDice, numSides);
+        const lobby = this
+            .serverData
+            .getLobby(this.client.lobbyId);
 
-        // Maybe need to split this up into different messages for the
-        //  player that rolled the dice and another message for the rest of the
-        //  room
+        // this should never happen, but just in case
+        if (!lobby || !lobby.gameState) {
+            return this.createError(
+                VisibilityLevelType.Private,
+                ErrorType.GeneralServerError
+            );
+        }
+
+        const diceType = this.gameObject.data.dicetype;
+        let params: any = {};
+
+        if (this.gameObject.data.params) {
+            params = this.gameObject.data.params;
+        }
+
+        let roll: RollResult;
+
+        try {
+            switch (diceType) {
+                case "move":
+                    roll = GameService.rollPlayerMovement(
+                            this.client.clientId,
+                            lobby,
+                            params);
+                    break;
+            }
+        } catch (err) {
+            return this.createError(
+                VisibilityLevelType.Room,
+                ErrorType.ErrorRollingDice
+            );
+        }
 
         const lobbyResponseObject = {
             type: ResponseMessageType.DiceRollResult,
             visibility: VisibilityLevelType.Room,
-            result: result
+            clientId: this.client.clientId,
+            dicetype: diceType,
+            game: lobby.gameState,
+            result: roll
         };
 
         return [lobbyResponseObject];

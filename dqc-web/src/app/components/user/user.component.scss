@@ -1,13 +1,10 @@
 div.user-list {
     border-top: 1px solid #ddd;
 
-    a.user-item {
-        display:block;
+    div.user-item {
         border-bottom:1px solid #ddd;
         padding: 1em .5em;
         cursor: pointer;
-        text-decoration: none;
-        color: black;
 
         &:hover {
             background-color: #eee;

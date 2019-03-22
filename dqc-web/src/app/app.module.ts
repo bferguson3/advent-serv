@@ -6,13 +6,14 @@ import { MatToolbarModule, MatMenuModule, MatButtonModule, MatIconModule, MatTab
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UserListComponent, MapListComponent } from './components';
+import { UserListComponent, MapListComponent, UserComponent } from './components';
 import { ApiService } from './services';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapListComponent,
+    UserComponent,
     UserListComponent
   ],
   imports: [

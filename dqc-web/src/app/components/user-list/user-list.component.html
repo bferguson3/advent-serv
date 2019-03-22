@@ -2,8 +2,8 @@
     <h2>Users</h2>
 
     <div class="user-list" *ngIf="users && users.length > 0">
-        <div class="user-item" *ngFor="let user of users">
+        <a class="user-item" *ngFor="let user of users" [routerLink]="getRoute(user)">
             {{user.name}}
-        </div>
+        </a>
     </div>
 </div>

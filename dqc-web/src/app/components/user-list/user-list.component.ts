@@ -17,4 +17,8 @@ export class UserListComponent {
             this.users = userList;
         });
     }
+
+    public getRoute(user: UserListItem): string {
+        return `/user/${user.link}`;
+    }
 }

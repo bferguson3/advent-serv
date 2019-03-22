@@ -37,18 +37,18 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
         playerReference.user = this.client.username;
         playerReference.slot = 1;
 
-        const lobby: GameLobby = {
-            id: ServerService.createLobbyId(),
-            mapname: mapName,
-            isLocked: isLocked,
-            user: this.client.username,
-            userId: this.client.clientId,
-            playerCount: 1,
-            players: [
-                playerReference
-            ],
-            gameState: null
-        };
+        const lobby: GameLobby = new GameLobby();
+
+        lobby.id = ServerService.createLobbyId();
+        lobby.mapname = mapName;
+        lobby.isLocked = isLocked;
+        lobby.user = this.client.username;
+        lobby.userId = this.client.clientId;
+        lobby.gameState =  null;
+        lobby.playerCount = 1;
+        lobby.players = [
+            playerReference
+        ];
 
         this.client.lobbyId = lobby.id;
 

@@ -10,4 +10,14 @@ export class GameLobby {
     public playerCount: number;
     public players: LobbyPlayerReference[];
     public gameState: GameState;
+
+    public getPlayerSlot(clientId: string): number {
+        for (const playerRef of this.players) {
+            if (playerRef.clientId === clientId) {
+                return playerRef.slot;
+            }
+        }
+
+        return 0;
+    }
 }

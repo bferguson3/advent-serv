@@ -1,4 +1,5 @@
-import { GameState, RollResult } from "../entities";
+import { GameLobby, RollResult } from "../entities";
+import { ErrorType } from "../enums";
 
 export class GameService {
 
@@ -18,16 +19,28 @@ export class GameService {
         return result;
     }
 
-    // Movement functions
+    // Dice roll functions
     public static rollPlayerMovement = (
         clientId: string,
-        gameState: GameState,
+        gameLobby: GameLobby,
         params: any): RollResult => {
 
         // TODO: figure out how many dice to roll based on player state
         const rollResult = GameService.rollDice(1, 6);
 
-        // TODO: move player
+        let slot = gameLobby.getPlayerSlot(clientId);
+
+        if (slot === 0) {
+            throw new Error();
+        }
+
+        // slot is 1 based index, player loc is 0 based array
+        slot--;
+
+        const pos = gameLobby.gameState.player_positions[slot];
+
+        // TODO: check actual board
+        gameLobby.gameState.player_positions[slot] = pos + rollResult.total;
 
         return rollResult;
     }

@@ -33,6 +33,10 @@ export class GameService {
         if (slot === 0) {
             throw new Error();
         }
+        // if the last player in order has taken their turn, reduce dice_left in gamestate
+        if (slot === gameLobby.playerCount) {
+            gameLobby.gameState.rolls_left -= 1;
+        }
 
         // slot is 1 based index, player loc is 0 based array
         slot--;

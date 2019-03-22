@@ -4,4 +4,5 @@ export class GameState {
     public current_turn: number;
     public active_player: number;
     public flags: any[] = [];
+    public rolls_left: number;
 }

@@ -1,0 +1,16 @@
+<mat-toolbar color="primary" class="main-toolbar">
+  <span>{{title}}</span>
+
+  <button mat-icon-button [matMenuTriggerFor]="appMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="body-content">
+  <router-outlet></router-outlet>
+</div>
+
+<mat-menu #appMenu="matMenu">
+  <a routerLink="/" mat-menu-item>Users</a>
+  <a routerLink="/maps" mat-menu-item>Maps</a>
+</mat-menu>

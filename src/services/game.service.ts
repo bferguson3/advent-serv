@@ -1,4 +1,4 @@
-import { RollResult } from "../entities";
+import { GameState, RollResult } from "../entities";
 
 export class GameService {
 
@@ -16,6 +16,20 @@ export class GameService {
         }
 
         return result;
+    }
+
+    // Movement functions
+    public static rollPlayerMovement = (
+        clientId: string,
+        gameState: GameState,
+        params: any): RollResult => {
+
+        // TODO: figure out how many dice to roll based on player state
+        const rollResult = GameService.rollDice(1, 6);
+
+        // TODO: move player
+
+        return rollResult;
     }
 
     private static MIN_DIE_ROLL: number = 1;

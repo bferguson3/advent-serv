@@ -1,5 +1,4 @@
 import { GameLobby, RollResult } from "../entities";
-import { ErrorType } from "../enums";
 
 export class GameService {
 
@@ -47,6 +46,12 @@ export class GameService {
         gameLobby.gameState.player_positions[slot] = pos + rollResult.total;
 
         return rollResult;
+    }
+
+    private static advanceTurn(
+        gameLobby: GameLobby): void {
+
+        
     }
 
     private static MIN_DIE_ROLL: number = 1;

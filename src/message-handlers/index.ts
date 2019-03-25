@@ -6,6 +6,7 @@ export { LeaveLobbyHandler } from "./leave-lobby.handler";
 export { ListLobbiesHandler } from "./list-lobbies.handler";
 export { LoginHandler } from "./login.handler";
 export { RequestCharacterDataHandler } from "./request-character-data.handler";
+export { ResolveSpaceHandler } from "./resolve-space.handler";
 export { RollDiceHandler } from "./roll-dice.handler";
-export { UpdateLobbyCharacterHandler } from "./update-lobby-char.handler";
 export { StartGameHandler } from "./start-game.handler";
+export { UpdateLobbyCharacterHandler } from "./update-lobby-char.handler";

@@ -1,7 +1,7 @@
 import { GameClient, IResponseObject, ServerData } from "../entities";
 import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
-import { MesssageHandlerBase } from "./message-handler-base.handler";
 import { GameService } from "../services";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class ResolveSpaceHandler extends MesssageHandlerBase {
 
@@ -28,11 +28,13 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
 
         // TODO: some switch statement with the map position tiletype... maybe make a separate service when we have more logic
         let tileType: string;
+        let treasure: any[] = [];
 
         switch (mapPosition.tileType) {
             default:
                 tileType = "empty";
                 GameService.advanceTurn(lobby);
+                treasure = [];
                 break;
         }
 
@@ -40,7 +42,8 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             type: ResponseMessageType.ResolveSpace,
             visibility: VisibilityLevelType.Room,
             tileType: tileType,
-            game: lobby.gameState
+            game: lobby.gameState,
+            treasure: treasure
         };
 
         return [responseObject];

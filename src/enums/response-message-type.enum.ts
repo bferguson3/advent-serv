@@ -42,5 +42,8 @@ export enum ResponseMessageType {
     LobbyUpdate = "lobby_update",
 
     // generic catch-all error type
-    Error = "error"
+    Error = "error",
+
+    // data about the current space
+    ResolveSpace = "space_resolved"
 }

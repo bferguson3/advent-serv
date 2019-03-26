@@ -2,7 +2,7 @@ import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameLobbyModel } from "./client-models";
 import { GameClient, IResponseObject, ServerData } from "./entities";
 import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
+import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { MapService, ServerService } from "./services";
 
@@ -128,6 +128,9 @@ export class App {
                                     break;
                                 case RequestMessageType.GameState:
                                     messageHandler = new GameStateHandler(gameObject, client, this.serverData);
+                                    break;
+                                case RequestMessageType.ResolveSpace:
+                                    messageHandler = new ResolveSpaceHandler(gameObject, client, this.serverData);
                                     break;
                                 default:
                                     messageHandler = new BadMessageHandler(gameObject, client, this.serverData);

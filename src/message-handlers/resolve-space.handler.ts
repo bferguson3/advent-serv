@@ -1,5 +1,7 @@
-import { GameClient, IResponseObject, ServerData, MapPosition } from "../entities";
+import { GameClient, IResponseObject, ServerData } from "../entities";
+import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
+import { GameService } from "../services";
 
 export class ResolveSpaceHandler extends MesssageHandlerBase {
 
@@ -14,9 +16,33 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             .serverData
             .getLobby(this.client.lobbyId);
 
+        if (!lobby || !lobby.gameState) {
+            return this.createError(
+                VisibilityLevelType.Room,
+                ErrorType.GeneralServerError
+            );
+        }
+
         // determine the space that the current slot is on
+        const mapPosition = lobby.getCurrentMapPosition(this.serverData);
 
+        // TODO: some switch statement with the map position tiletype... maybe make a separate service when we have more logic
+        let tileType: string;
 
-        // return data about the space
+        switch (mapPosition.tileType) {
+            default:
+                tileType = "empty";
+                GameService.advanceTurn(lobby);
+                break;
+        }
+
+        const responseObject = {
+            type: ResponseMessageType.ResolveSpace,
+            visibility: VisibilityLevelType.Room,
+            tileType: tileType,
+            game: lobby.gameState
+        };
+
+        return [responseObject];
     }
 }

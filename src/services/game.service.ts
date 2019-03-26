@@ -48,10 +48,16 @@ export class GameService {
         return rollResult;
     }
 
-    private static advanceTurn(
+    public static advanceTurn(
         gameLobby: GameLobby): void {
 
-        
+        // check to see if at last player
+        if (gameLobby.gameState.active_player >= gameLobby.gameState.player_positions.length) {
+            gameLobby.gameState.active_player = 1;
+            gameLobby.gameState.current_turn++;
+        } else {
+            gameLobby.gameState.active_player++;
+        }
     }
 
     private static MIN_DIE_ROLL: number = 1;

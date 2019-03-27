@@ -8,4 +8,5 @@ export class GameState {
     public flags: any[] = [];
     public rolls_left: number;
     public combatState: CombatState;
+    public remaining_amount_in_roll: number;
 }

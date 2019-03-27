@@ -1,4 +1,4 @@
-import { GameLobby, MapPosition, RollResult } from "../entities";
+import { GameLobby, MapBoardItem, MapPosition, RollResult, ServerData } from "../entities";
 
 export class GameService {
 
@@ -22,6 +22,7 @@ export class GameService {
     public static rollPlayerMovement = (
         clientId: string,
         gameLobby: GameLobby,
+        serverData: ServerData,
         params: any): RollResult => {
 
         // TODO: figure out how many dice to roll based on player state
@@ -32,7 +33,9 @@ export class GameService {
         if (slot === 0) {
             throw new Error();
         }
+
         // if the last player in order has taken their turn, reduce dice_left in gamestate
+        // should this be after resolve_space?
         if (slot === gameLobby.playerCount) {
             gameLobby.gameState.rolls_left -= 1;
         }
@@ -40,10 +43,39 @@ export class GameService {
         // slot is 1 based index, player loc is 0 based array
         slot--;
 
-        const pos = gameLobby.gameState.player_positions[slot];
+        let pos = gameLobby.gameState.player_positions[slot];
 
-        // TODO: check actual board
-        gameLobby.gameState.player_positions[slot] = pos + rollResult.total;
+        const map = gameLobby.getCurrentMap(serverData);
+
+        // keeping track of remaining roll amount in order to be able to handle decision spots
+        gameLobby.gameState.remaining_amount_in_roll = rollResult.total;
+
+        while (gameLobby.gameState.remaining_amount_in_roll > 0) {
+            // better handle non linear boards
+            pos++;
+
+            // have to loop all the spaces in case the board isn't completely linear
+            let matchingSpace: MapBoardItem = null;
+
+            for (const space of map.Board) {
+                if (space.SpaceNumber === pos) {
+                    matchingSpace = space;
+                    break;
+                }
+            }
+
+            // here is where we'll have to make a decision about the type of space and
+            // if to terminate the loop early
+
+            if (matchingSpace === null) {
+                // hit the end of the board, position over at 1
+                pos = 1;
+            }
+
+            gameLobby.gameState.remaining_amount_in_roll--;
+        }
+
+        gameLobby.gameState.player_positions[slot] = pos;
 
         return rollResult;
     }

@@ -50,6 +50,7 @@ export class RollDiceHandler extends MesssageHandlerBase {
                     roll = GameService.rollPlayerMovement(
                             this.client.clientId,
                             lobby,
+                            this.serverData,
                             params);
                     break;
             }

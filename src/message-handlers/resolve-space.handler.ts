@@ -1,4 +1,4 @@
-import { GameClient, IResponseObject, ServerData } from "../entities";
+import { CombatState, GameClient, IResponseObject, ServerData } from "../entities";
 import { ErrorType, ResponseMessageType, VisibilityLevelType } from "../enums";
 import { GameService } from "../services";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -29,13 +29,39 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
         // TODO: some switch statement with the map position tiletype... maybe make a separate service when we have more logic
         let tileType: string;
         let treasure: any[] = [];
+        let combatTriggered: boolean = false;
 
         switch (mapPosition.tileType) {
             default:
-                tileType = "empty";
-                GameService.advanceTurn(lobby);
-                treasure = [];
+                if (GameService.triggeredCombat(mapPosition)) {
+                    combatTriggered = true;
+                    tileType = "combat";
+                    treasure = [];
+                } else {
+                    tileType = "empty";
+                    GameService.advanceTurn(lobby);
+                    treasure = [];
+                }
                 break;
+        }
+
+        if (combatTriggered) {
+            const combatState = new CombatState();
+            combatState.round = 1;
+            combatState.currentPlayer = lobby.gameState.active_player;
+            combatState.playerTriggered = lobby.gameState.active_player;
+            combatState.enemies = [
+                {
+                    name: "Slime",
+                    hp: 4,
+                },
+                {
+                    name: "Imp",
+                    hp: 6,
+                }
+            ];
+
+            lobby.gameState.combatState = combatState;
         }
 
         const responseObject = {
@@ -45,6 +71,11 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             game: lobby.gameState,
             treasure: treasure
         };
+
+        if (lobby.gameState.combatState) {
+            // tslint:disable-next-line:no-string-literal
+            responseObject["combat"] = lobby.gameState.combatState;
+        }
 
         return [responseObject];
     }

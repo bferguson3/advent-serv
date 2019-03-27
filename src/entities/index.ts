@@ -1,3 +1,5 @@
+export { CombatState } from "./combat-state.entity";
+export { Enemy } from "./enemy.entity";
 export { GameClient } from "./game-client.entity";
 export { GameLobby } from "./game-lobby.entity";
 export { GameState } from "./game-state.entity";

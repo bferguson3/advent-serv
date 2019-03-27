@@ -42,6 +42,11 @@ export class RollDiceHandler extends MesssageHandlerBase {
         try {
             switch (diceType) {
                 case "move":
+                    // don't let anyone move if in active combat
+                    if (lobby.gameState.combatState) {
+                        throw new Error();
+                    }
+
                     roll = GameService.rollPlayerMovement(
                             this.client.clientId,
                             lobby,

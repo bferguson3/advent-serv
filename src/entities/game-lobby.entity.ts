@@ -36,6 +36,7 @@ export class GameLobby {
                 positionData.slot = this.gameState.active_player;
                 positionData.spaceNumber = mapItem.SpaceNumber;
                 positionData.tileType = mapItem.TileType;
+                positionData.tileData = mapItem.TileData;
             }
         }
 

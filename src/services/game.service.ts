@@ -1,4 +1,4 @@
-import { GameLobby, RollResult } from "../entities";
+import { GameLobby, MapPosition, RollResult } from "../entities";
 
 export class GameService {
 
@@ -58,6 +58,25 @@ export class GameService {
         } else {
             gameLobby.gameState.active_player++;
         }
+    }
+
+    public static triggeredCombat(mapPosition: MapPosition): boolean {
+        // TODO: add encounter rate to map, not just to tile
+        let combatPercentage: number = 0;
+
+        if (mapPosition.tileData && mapPosition.tileData.EncounterRate) {
+            combatPercentage = mapPosition.tileData.EncounterRate;
+        }
+
+        if (combatPercentage > 0) {
+            const combatRoll = this.rollDice(1, 100).total;
+
+            if (combatRoll <= combatPercentage) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static MIN_DIE_ROLL: number = 1;

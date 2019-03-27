@@ -5,4 +5,5 @@ export class GameState {
     public active_player: number;
     public flags: any[] = [];
     public rolls_left: number;
+    public remaining_amount_in_roll: number;
 }

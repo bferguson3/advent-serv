@@ -1,5 +1,6 @@
 import { GameState } from "./game-state.entity";
 import { LobbyPlayerReference } from "./lobby-player-reference.entity";
+import { MapData } from "./map-data.entity";
 import { MapPosition } from "./map-position.entity";
 import { ServerData } from "./server-data.entity";
 
@@ -27,7 +28,7 @@ export class GameLobby {
         const currentPlayerIndex = this.gameState.active_player - 1;
         const currentPosition = this.gameState.player_positions[currentPlayerIndex];
 
-        const mapData = serverData.getMatchingMap(this.mapname);
+        const mapData = this.getCurrentMap(serverData);
         let positionData: MapPosition = null;
 
         for (const mapItem of mapData.Board) {
@@ -40,5 +41,10 @@ export class GameLobby {
         }
 
         return positionData;
+    }
+
+    public getCurrentMap(serverData: ServerData): MapData {
+        const mapData = serverData.getMatchingMap(this.mapname);
+        return mapData;
     }
 }

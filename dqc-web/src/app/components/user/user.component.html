@@ -1,7 +1,29 @@
 <div class="mat-typography" *ngIf="user">
-    <h2>{{user.username}}</h2>
+    <h2 class="user-name">{{user.username}}</h2>
 
     <div class="user-data">
-    
+        <div class="last-login">Last Login: 
+            <ng-container *ngIf="user.lastLoginDate">{{user.lastLoginDate | amDateFormat: 'YYYY-MM-DD HH:mm'}}</ng-container>
+            <ng-container *ngIf="!user.lastLoginDate">Never</ng-container>
+        </div>
+        
+        <div class="no-characters" *ngIf="!user.playerData || user.playerData.length === 0">No Characters</div>
+
+        <div class="characters">
+            <mat-card *ngFor="let char of user.playerData">
+                <mat-card-title>
+                    <span>{{char.name}}</span>
+                    <span class="gender" [ngClass]="{'female': user.gender === 'F', 'male': user.gender === 'M'}">{{user.gender}}</span>
+                </mat-card-title>
+                <mat-card-subtitle>{{char.currentClass}}</mat-card-subtitle>
+                <mat-card-content>
+                    
+
+
+
+
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
 </div>

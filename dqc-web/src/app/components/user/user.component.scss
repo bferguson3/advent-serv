@@ -1,13 +1,31 @@
-div.user-list {
-    border-top: 1px solid #ddd;
+h2.user-name {
+    margin-bottom:.25em;
+    text-decoration: underline;
+}
 
-    div.user-item {
-        border-bottom:1px solid #ddd;
-        padding: 1em .5em;
-        cursor: pointer;
+div.user-data {
+    div.last-login {
+        margin-left:2em;
+        font-style: italic;
+        color: #AAA;
+    }
 
-        &:hover {
-            background-color: #eee;
+    div.no-characters, div.characters {
+        margin-top:2em;
+    }
+
+    div.characters {
+        
+        mat-card {
+            margin:1em;
+        }
+
+        @media (min-width:1024px) {
+            mat-card {
+                display:inline-block;
+                min-width:32%;
+                max-width:32%;
+            }
         }
     }
 }

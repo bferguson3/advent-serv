@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatMenuModule, MatButtonModule, MatIconModule, MatTableModule } from '@angular/material';
+import { MatToolbarModule, MatMenuModule, MatButtonModule, MatIconModule, MatTableModule, MatCardModule } from '@angular/material';
+import { MomentModule } from 'ngx-moment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,7 +26,9 @@ import { ApiService } from './services';
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    HttpClientModule
+    MatCardModule,
+    HttpClientModule,
+    MomentModule
   ],
   providers: [
     ApiService

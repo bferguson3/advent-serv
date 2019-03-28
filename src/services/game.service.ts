@@ -1,5 +1,4 @@
-import { GameLobby, RollResult } from "../entities";
-import { ErrorType } from "../enums";
+import { GameLobby, MapBoardItem, MapPosition, RollResult, ServerData } from "../entities";
 
 export class GameService {
 
@@ -23,6 +22,7 @@ export class GameService {
     public static rollPlayerMovement = (
         clientId: string,
         gameLobby: GameLobby,
+        serverData: ServerData,
         params: any): RollResult => {
 
         // TODO: figure out how many dice to roll based on player state
@@ -34,15 +34,81 @@ export class GameService {
             throw new Error();
         }
 
+        // if the last player in order has taken their turn, reduce dice_left in gamestate
+        // should this be after resolve_space?
+        if (slot === gameLobby.playerCount) {
+            gameLobby.gameState.rolls_left -= 1;
+        }
+
         // slot is 1 based index, player loc is 0 based array
         slot--;
 
-        const pos = gameLobby.gameState.player_positions[slot];
+        let pos = gameLobby.gameState.player_positions[slot];
 
-        // TODO: check actual board
-        gameLobby.gameState.player_positions[slot] = pos + rollResult.total;
+        const map = gameLobby.getCurrentMap(serverData);
+
+        // keeping track of remaining roll amount in order to be able to handle decision spots
+        gameLobby.gameState.remaining_amount_in_roll = rollResult.total;
+
+        while (gameLobby.gameState.remaining_amount_in_roll > 0) {
+            // better handle non linear boards
+            pos++;
+
+            // have to loop all the spaces in case the board isn't completely linear
+            let matchingSpace: MapBoardItem = null;
+
+            for (const space of map.Board) {
+                if (space.SpaceNumber === pos) {
+                    matchingSpace = space;
+                    break;
+                }
+            }
+
+            // here is where we'll have to make a decision about the type of space and
+            // if to terminate the loop early
+
+            if (matchingSpace === null) {
+                // hit the end of the board, position over at 1
+                pos = 1;
+            }
+
+            gameLobby.gameState.remaining_amount_in_roll--;
+        }
+
+        gameLobby.gameState.player_positions[slot] = pos;
 
         return rollResult;
+    }
+
+    public static advanceTurn(
+        gameLobby: GameLobby): void {
+
+        // check to see if at last player
+        if (gameLobby.gameState.active_player >= gameLobby.gameState.player_positions.length) {
+            gameLobby.gameState.active_player = 1;
+            gameLobby.gameState.current_turn++;
+        } else {
+            gameLobby.gameState.active_player++;
+        }
+    }
+
+    public static triggeredCombat(mapPosition: MapPosition): boolean {
+        // TODO: add encounter rate to map, not just to tile
+        let combatPercentage: number = 0;
+
+        if (mapPosition.tileData && mapPosition.tileData.EncounterRate) {
+            combatPercentage = mapPosition.tileData.EncounterRate;
+        }
+
+        if (combatPercentage > 0) {
+            const combatRoll = this.rollDice(1, 100).total;
+
+            if (combatRoll <= combatPercentage) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static MIN_DIE_ROLL: number = 1;

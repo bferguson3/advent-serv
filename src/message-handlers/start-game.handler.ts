@@ -41,6 +41,7 @@ export class StartGameHandler extends MesssageHandlerBase {
         const gameState = new GameState();
         gameState.active_player = 1;
         gameState.current_turn = 1;
+        gameState.rolls_left = mapData.dice;
         gameState.flags = [];
 
         // start all players at tile 1

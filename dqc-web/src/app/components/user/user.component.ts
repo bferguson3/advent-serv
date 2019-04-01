@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services';
-import { UserListItem, UserData } from 'src/app/core';
+import { UserData } from '../../core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

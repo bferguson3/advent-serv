@@ -17,11 +17,60 @@
                 </mat-card-title>
                 <mat-card-subtitle>{{char.currentClass}}</mat-card-subtitle>
                 <mat-card-content>
-                    
+                    <div class="class-content">
+                        <span class="current-level">{{char.level}}</span>
 
-
-
-
+                        <div class="class-levels" *ngIf="char.clvl">
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='jester'}">
+                                <span class="class-level">
+                                    {{char.clvl.jester}}
+                                </span>
+                                <span class="class-name">
+                                    Jester
+                                </span>
+                            </div>
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='warrior'}">
+                                <span class="class-level">
+                                    {{char.clvl.warrior}}
+                                </span>
+                                <span class="class-name">
+                                    Warrior
+                                </span>
+                            </div>
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='priest'}">
+                                <span class="class-level">
+                                    {{char.clvl.priest}}
+                                </span>
+                                <span class="class-name">
+                                    Priest
+                                </span>
+                            </div>
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='thief'}">
+                                <span class="class-level">
+                                    {{char.clvl.thief}}
+                                </span>
+                                <span class="class-name">
+                                    Thief
+                                </span>
+                            </div>
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='mage'}">
+                                <span class="class-level">
+                                    {{char.clvl.mage}}
+                                </span>
+                                <span class="class-name">
+                                    Mage
+                                </span>
+                            </div>
+                            <div class="class-row" [ngClass]="{'current-class': char.currentClass=='budoka'}">
+                                <span class="class-level">
+                                    {{char.clvl.budoka}}
+                                </span>
+                                <span class="class-name">
+                                    Budoka
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </mat-card-content>
             </mat-card>
         </div>

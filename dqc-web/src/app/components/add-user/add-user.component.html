@@ -9,7 +9,7 @@
 
     <div class="add-form">
         <div class="error-message" *ngIf="hasError">
-            Error saving user.
+            {{errorMessage}}
         </div>
     
         <form #userForm="ngForm" (ngSubmit)="onSubmit()">

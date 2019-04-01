@@ -11,9 +11,12 @@ import { Router } from '@angular/router';
 })
 export class AddUserComponent {
 
+    public readonly DEFAULT_ERROR_MESSAGE: string = 'Error saving user';
+
     public isSubmitting: boolean = false;
     public hasError: boolean = false;
     public user: NewUser;
+    public errorMessage: string = '';
 
     constructor(
         private apiService: ApiService,
@@ -38,6 +41,12 @@ export class AddUserComponent {
             }, (err) => {
                 this.hasError = true;
                 this.isSubmitting = false;
+
+                if (err && err.status === 500 && typeof err.error === 'string') {
+                    this.errorMessage = err.error;
+                } else {
+                    this.errorMessage = this.DEFAULT_ERROR_MESSAGE;
+                }
             });
     }
 }

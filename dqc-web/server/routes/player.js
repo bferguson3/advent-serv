@@ -1,5 +1,4 @@
 var express = require('express');
-var pbkdf2 = require('pbkdf2');
 var router = express.Router();
 var fs = require('fs');
 
@@ -62,13 +61,13 @@ router.post('/new', (req, res) => {
     }
 });
 
-router.delete('', (req, res) => {
+router.post('/delete', (req, res) => {
     try {
         const username = req.body.username;
         const playerName = req.body.playerName;
         const playerIndex = req.body.playerIndex;
 
-        if (!username || !playerName || !playerIndex) {
+        if (!username || !playerName || playerIndex === null || playerIndex === undefined) {
             res.status(500).send("Missing fields needed to find character to delete");
             return;
         }
@@ -87,7 +86,7 @@ router.delete('', (req, res) => {
             return;
         }
 
-        if (!parsedData.playerData.length <= playerIndex) {
+        if (parsedData.playerData.length <= playerIndex) {
             res.status(500).send("Invalid index");
             return;
         } 

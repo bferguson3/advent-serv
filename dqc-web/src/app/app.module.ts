@@ -16,7 +16,8 @@ import {
   MatInputModule,
   MatProgressSpinnerModule,
   MatProgressBarModule,
-  MatSelectModule
+  MatSelectModule,
+  MatSnackBarModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -57,6 +58,7 @@ import {
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatSelectModule,
+    MatSnackBarModule,
     HttpClientModule,
     MomentModule
   ],

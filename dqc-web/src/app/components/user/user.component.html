@@ -17,10 +17,10 @@
         <div class="no-characters" *ngIf="!user.playerData || user.playerData.length === 0">No Characters</div>
 
         <div class="characters">
-            <mat-card *ngFor="let char of user.playerData">
+            <mat-card *ngFor="let char of user.playerData; index as i">
                 <mat-card-title>
                     <span>{{char.name}}</span>
-                    <span class="gender" [ngClass]="{'female': user.gender === 'F', 'male': user.gender === 'M'}">{{user.gender}}</span>
+                    <span class="gender" [ngClass]="{'female': user.gender === 'F', 'male': user.gender === 'M'}">{{char.gender}}</span>
                 </mat-card-title>
                 <mat-card-subtitle>{{char.currentClass}}</mat-card-subtitle>
                 <mat-card-content>
@@ -77,6 +77,12 @@
                                 </span>
                             </div>
                         </div>
+                    </div>
+                    <div class="delete-character-row">
+                        <button (click)="deleteCharacter(char, i)" mat-flat-button color="warn">
+                            <mat-icon>remove</mat-icon>
+                            Delete
+                        </button>
                     </div>
                 </mat-card-content>
             </mat-card>

@@ -33,7 +33,33 @@ div.user-data {
             }
         }
 
+        mat-card-title {
+            display:flex;
+            justify-content: space-between;
+
+            span.gender {
+                color:white;
+                background-color: var(--primary-color);
+                display:inline-block;
+                text-align: center;
+                border-radius: 50%;
+                font-size: .5em;
+                font-weight:bold;
+                max-width:14px;
+                max-height:14px;
+                min-width:14px;
+                min-height:14px;
+                padding:5px;
+                line-height:14px;
+            }
+        }
+
         mat-card-content {
+            div.delete-character-row {
+                display:flex;
+                justify-content: flex-end;
+            }
+
             div.class-content {
                 display:flex;
 

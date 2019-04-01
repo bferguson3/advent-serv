@@ -1,0 +1,72 @@
+<div class="mat-typography">
+        <div class="top-row">
+            <h2>Add Player</h2>
+            <a (click)="onCancelClick()" mat-flat-button color="primary">
+                <mat-icon>undo</mat-icon>
+                Cancel
+            </a>
+        </div>
+    
+        <div class="add-form" *ngIf="player">
+            <div class="error-message" *ngIf="hasError">
+                {{errorMessage}}
+            </div>
+        
+            <form #playerForm="ngForm" (ngSubmit)="onSubmit()">
+                <mat-form-field class="full-width">
+                    <input 
+                        matInput 
+                        [(ngModel)]="player.name"
+                        placeholder="Name" 
+                        id="name" 
+                        name="name"
+                        #name="ngModel"
+                        required />
+                </mat-form-field>
+                
+                <mat-form-field class="full-width">
+                    <mat-label>Gender</mat-label>
+                    <mat-select 
+                        [(ngModel)]="player.gender"
+                        name="gender"
+                        id="gender"
+                        #gender="ngModel"
+                        required>
+                        <mat-option *ngFor="let gender of genders" [value]="gender.value">
+                            {{gender.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>Class</mat-label>
+                    <mat-select 
+                        [(ngModel)]="player.currentClass"
+                        name="currentClass"
+                        id="currentClass"
+                        #currentClass="ngModel"
+                        required>
+                        <mat-option *ngFor="let class of classes" [value]="class.value">
+                            {{class.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+    
+                <button 
+                    class="submit-button"
+                    type="submit" 
+                    mat-flat-button 
+                    color="primary"
+                    [disabled]="!playerForm.form.valid || isSubmitting">
+                        Submit
+                </button>
+    
+                <div class="submit-progress-bar">
+                    <ng-container *ngIf="isSubmitting">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                    </ng-container>
+                </div>
+            </form>
+    
+        </div>
+    </div>

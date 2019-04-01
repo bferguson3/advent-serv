@@ -1,0 +1,26 @@
+div.top-row {
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 2em;
+
+    h2 {
+        margin-bottom:0;
+    }
+}
+
+div.user-list {
+    border-top: 1px solid #ddd;
+
+    a.user-item {
+        display:block;
+        border-bottom:1px solid #ddd;
+        padding: 1em .5em;
+        cursor: pointer;
+        text-decoration: none;
+        color: black;
+
+        &:hover {
+            background-color: #eee;
+        }
+    }
+}

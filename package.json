@@ -12,9 +12,13 @@
     "build": "tsc",
     "run-app": "node ./dist/index",
     "serve": "run-s build run-app",
-    "start-web": "node ./dqc-web/bin/www"
+    "install-web-deps": "cd dqc-web && npm install",
+    "build-web": "cd dqc-web && ng build",
+    "run-web": "node ./dqc-web/server.js",
+    "start-web": "run-s install-web-deps build-web run-web"
   },
   "dependencies": {
+    "@angular/cli": "^7.3.6",
     "babel-preset-env": "1.7.0",
     "babel-register": "6.26.0",
     "cookie-parser": "1.4.3",

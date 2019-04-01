@@ -1,0 +1,113 @@
+h2.user-name {
+    margin-bottom:.25em;
+    text-decoration: underline;
+}
+
+div.user-data {
+    div.last-login {
+        margin-left:2em;
+        font-style: italic;
+        color: #AAA;
+    }
+
+    div.add-character {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    div.no-characters, div.characters {
+        margin-top:2em;
+    }
+
+    div.characters {
+        
+        mat-card {
+            margin:1em;
+        }
+
+        @media (min-width:1024px) {
+            mat-card {
+                display:inline-block;
+                min-width:32%;
+                max-width:32%;
+            }
+        }
+
+        mat-card-title {
+            display:flex;
+            justify-content: space-between;
+
+            span.gender {
+                color:white;
+                background-color: var(--primary-color);
+                display:inline-block;
+                text-align: center;
+                border-radius: 50%;
+                font-size: .5em;
+                font-weight:bold;
+                max-width:14px;
+                max-height:14px;
+                min-width:14px;
+                min-height:14px;
+                padding:5px;
+                line-height:14px;
+            }
+        }
+
+        mat-card-content {
+            div.delete-character-row {
+                display:flex;
+                justify-content: flex-end;
+            }
+
+            div.class-content {
+                display:flex;
+
+                span.current-level {
+                    background-color: var(--primary-color);
+                    color: #fff;
+                    border-radius: 50%;
+                    font-size: 2em;
+                    font-weight:bold;
+                    max-width:20px;
+                    max-height:20px;
+                    padding:10px;
+                    margin-right:1em;
+                }
+
+                div.class-levels {
+                    div.class-row {
+                        span.class-level {
+                            border: 1px solid var(--primary-color);
+                            color: #000;
+                            display:inline-block;
+                            text-align: center;
+                            border-radius: 50%;
+                            font-size: 1em;
+                            font-weight:bold;
+                            max-width:14px;
+                            max-height:14px;
+                            min-width:14px;
+                            min-height:14px;
+                            padding:5px;
+                            line-height:14px;
+                            margin-right:.3em;
+                            margin-bottom:.5em;
+                        }
+
+                        span.class-name {
+                            font-weight:bold;
+                        }
+
+                        &.current-class {
+                            span.class-level {
+                                background-color: var(--primary-color);
+                                color:#fff;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

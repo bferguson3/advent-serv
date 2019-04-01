@@ -7,6 +7,13 @@
             <ng-container *ngIf="!user.lastLoginDate">Never</ng-container>
         </div>
         
+        <div class="add-character">
+            <a [routerLink]="addPlayerLink" mat-flat-button color="primary">
+                <mat-icon>add</mat-icon>
+                Add Character
+            </a>
+        </div>
+
         <div class="no-characters" *ngIf="!user.playerData || user.playerData.length === 0">No Characters</div>
 
         <div class="characters">

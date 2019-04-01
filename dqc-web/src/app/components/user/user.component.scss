@@ -10,6 +10,11 @@ div.user-data {
         color: #AAA;
     }
 
+    div.add-character {
+        display: flex;
+        justify-content: flex-end;
+    }
+
     div.no-characters, div.characters {
         margin-top:2em;
     }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserListItem, UserData, NewUser } from '../core';
+import { UserListItem, UserData, NewUser, NewPlayer } from '../core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -11,6 +11,7 @@ export class ApiService {
     ) {}
 
     private readonly USER_API_PATH: string = 'user';
+    private readonly PLAYER_API_PATH: string = 'player';
     private readonly NEW_API_PATH: string = 'new';
 
     public getUserList(): Observable<UserListItem[]> {
@@ -33,6 +34,14 @@ export class ApiService {
 
         const call = this.httpClient
             .post<UserData>(`${environment.apiBase}${this.USER_API_PATH}/${this.NEW_API_PATH}/`, user);
+
+        return call;
+    }
+
+    public saveNewPlayer(player: NewPlayer): Observable<UserData> {
+
+        const call = this.httpClient
+            .post<UserData>(`${environment.apiBase}${this.PLAYER_API_PATH}/${this.NEW_API_PATH}/`, player);
 
         return call;
     }

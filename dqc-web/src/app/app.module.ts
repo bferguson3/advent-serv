@@ -15,18 +15,27 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatProgressSpinnerModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatSelectModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UserListComponent, MapListComponent, UserComponent, AddUserComponent } from './components';
 import { ApiService } from './services';
+
+import {
+  UserListComponent,
+  MapListComponent,
+  UserComponent,
+  AddUserComponent,
+  AddPlayerComponent
+} from './components';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    AddPlayerComponent,
     AddUserComponent,
     MapListComponent,
     UserComponent,
@@ -47,6 +56,7 @@ import { ApiService } from './services';
     MatInputModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatSelectModule,
     HttpClientModule,
     MomentModule
   ],

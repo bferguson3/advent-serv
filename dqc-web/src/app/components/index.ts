@@ -1,3 +1,4 @@
+export { AddPlayerComponent } from './add-player/add-player.component';
 export { AddUserComponent } from './add-user/add-user.component';
 export { MapListComponent } from './map-list/map-list.component';
 export { UserComponent } from './user/user.component';

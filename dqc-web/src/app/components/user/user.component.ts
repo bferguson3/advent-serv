@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class UserComponent {
     public user: UserData;
+    public addPlayerLink: string = '';
 
     constructor(
         private apiService: ApiService,
@@ -21,6 +22,7 @@ export class UserComponent {
 
             this.apiService.getUserData(id).subscribe((user: UserData) => {
                 this.user = user;
+                this.addPlayerLink = `/add-player/${id}/${this.user.username}`;
             });
         }
     }

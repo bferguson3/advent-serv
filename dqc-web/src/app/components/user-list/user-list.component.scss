@@ -1,3 +1,13 @@
+div.top-row {
+    display:flex;
+    justify-content: space-between;
+    margin-bottom: 2em;
+
+    h2 {
+        margin-bottom:0;
+    }
+}
+
 div.user-list {
     border-top: 1px solid #ddd;
 

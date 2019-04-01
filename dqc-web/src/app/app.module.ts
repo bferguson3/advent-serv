@@ -1,24 +1,40 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatMenuModule, MatButtonModule, MatIconModule, MatTableModule, MatCardModule } from '@angular/material';
 import { MomentModule } from 'ngx-moment';
+
+import {
+  MatToolbarModule,
+  MatMenuModule,
+  MatButtonModule,
+  MatIconModule,
+  MatTableModule,
+  MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatProgressSpinnerModule,
+  MatProgressBarModule
+} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UserListComponent, MapListComponent, UserComponent } from './components';
+import { UserListComponent, MapListComponent, UserComponent, AddUserComponent } from './components';
 import { ApiService } from './services';
+
 
 @NgModule({
   declarations: [
     AppComponent,
+    AddUserComponent,
     MapListComponent,
     UserComponent,
     UserListComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -27,6 +43,10 @@ import { ApiService } from './services';
     MatIconModule,
     MatTableModule,
     MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
     HttpClientModule,
     MomentModule
   ],

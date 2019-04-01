@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services';
-import { UserListItem } from 'src/app/core';
+import { UserListItem } from '../../core';
 
 @Component({
     selector: 'app-user-list',

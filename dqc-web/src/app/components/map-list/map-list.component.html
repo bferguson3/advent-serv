@@ -9,8 +9,15 @@
     
 
     <div class="map-list" *ngIf="maps && maps.length > 0">
-        <a class="map-item" *ngFor="let map of maps">
-            {{map.name}}
-        </a>
+        <div class="map-item" *ngFor="let map of maps">
+            <span>{{map.name}}</span>
+
+            <button mat-flat-button color="warn" (click)="deleteMap(map)">
+                <mat-icon>remove</mat-icon>
+                Delete
+            </button>
+        </div>
+
+        
     </div>
 </div>

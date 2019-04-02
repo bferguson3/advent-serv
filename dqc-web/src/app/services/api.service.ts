@@ -73,6 +73,13 @@ export class ApiService {
         return call;
     }
 
+    public deleteMap(fileHash: string): Observable<void> {
+        const call = this.httpClient
+            .delete<void>(`${environment.apiBase}${this.MAP_API_PATH}/${fileHash}`);
+
+        return call;
+    }
+
     public getMapUploadUrl(): string {
         return `${environment.apiBase}${this.MAP_API_PATH}`;
     }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiListItem } from '../../core';
 import { ApiService } from '../../services';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 
 import { AddMapComponent } from '../add-map/add-map.component';
 
@@ -15,7 +15,8 @@ export class MapListComponent {
 
     constructor(
         private apiService: ApiService,
-        private matDialog: MatDialog
+        private matDialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {
         this.updateMaps();
     }
@@ -29,6 +30,20 @@ export class MapListComponent {
 
         dialogRef.afterClosed().subscribe(() => {
             this.updateMaps();
+        });
+    }
+
+    public deleteMap(listItem: ApiListItem): void {
+        this.apiService.deleteMap(listItem.link).subscribe(() => {
+            this.updateMaps();
+            this.snackBar.open(`${listItem.name} deleted successfully!`, 'OK', {
+                duration: 3000
+            });
+        }, (err) => {
+            this.updateMaps();
+            this.snackBar.open(`Error deleting ${listItem.name}`, 'OK', {
+                duration: 3000
+            });
         });
     }
 

@@ -96,4 +96,15 @@ router.post('/', upload.any(), function(req, res, next) {
     }
 });
 
+router.delete('/:fileHash', (req, res) => {
+    try {
+        const fileHash = req.params["fileHash"];
+        const fileName = unHashLinkHash(fileHash);
+        fs.unlinkSync(`${path}/${fileName}`);
+        res.status(200).json();
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
 module.exports = router;

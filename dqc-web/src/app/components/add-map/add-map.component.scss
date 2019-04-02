@@ -1,0 +1,22 @@
+div.upload-drop-zone {
+    min-width:500px;
+    max-width:500px;
+    min-height:300px;
+    max-height:300px;
+
+    border: 1px solid var(--primary-color);
+    border-radius:10px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.queue-container {
+    mat-file-upload-queue {
+        margin-top:.5em;
+
+        button {
+            margin-right:.5em;
+        }
+    }
+}

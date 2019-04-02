@@ -1,3 +1,16 @@
 <div class="mat-typography">
-    <h2>Maps</h2>
+    <div class="top-row">
+        <h2>Maps</h2>
+        <button mat-flat-button color="primary" (click)="onAddMapsClick()">
+            <mat-icon>add</mat-icon>
+            Add Maps
+        </button>
+    </div>
+    
+
+    <div class="map-list" *ngIf="maps && maps.length > 0">
+        <a class="map-item" *ngFor="let map of maps">
+            {{map.name}}
+        </a>
+    </div>
 </div>

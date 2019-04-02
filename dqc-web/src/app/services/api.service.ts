@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserListItem, UserData, NewUser, NewPlayer, PlayerData } from '../core';
+import { ApiListItem, UserData, NewUser, NewPlayer, PlayerData } from '../core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -11,14 +11,16 @@ export class ApiService {
     ) {}
 
     private readonly USER_API_PATH: string = 'user';
+    private readonly MAP_API_PATH: string = 'map';
     private readonly PLAYER_API_PATH: string = 'player';
     private readonly NEW_API_PATH: string = 'new';
     private readonly DELETE_API_PATH: string = 'delete';
 
-    public getUserList(): Observable<UserListItem[]> {
+    /* Users */
+    public getUserList(): Observable<ApiListItem[]> {
 
         const call = this.httpClient
-            .get<UserListItem[]>(`${environment.apiBase}${this.USER_API_PATH}`);
+            .get<ApiListItem[]>(`${environment.apiBase}${this.USER_API_PATH}`);
 
         return call;
     }
@@ -39,6 +41,7 @@ export class ApiService {
         return call;
     }
 
+    /* Characters */
     public saveNewPlayer(player: NewPlayer): Observable<UserData> {
 
         const call = this.httpClient
@@ -59,5 +62,25 @@ export class ApiService {
             .post<void>(`${environment.apiBase}${this.PLAYER_API_PATH}/${this.DELETE_API_PATH}`, deleteRequest);
 
         return call;
+    }
+
+    /* Maps */
+    public getMapList(): Observable<ApiListItem[]> {
+
+        const call = this.httpClient
+            .get<ApiListItem[]>(`${environment.apiBase}${this.MAP_API_PATH}`);
+
+        return call;
+    }
+
+    public deleteMap(fileHash: string): Observable<void> {
+        const call = this.httpClient
+            .delete<void>(`${environment.apiBase}${this.MAP_API_PATH}/${fileHash}`);
+
+        return call;
+    }
+
+    public getMapUploadUrl(): string {
+        return `${environment.apiBase}${this.MAP_API_PATH}`;
     }
 }

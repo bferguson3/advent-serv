@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MomentModule } from 'ngx-moment';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 import {
   MatToolbarModule,
@@ -17,7 +18,8 @@ import {
   MatProgressSpinnerModule,
   MatProgressBarModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatDialogModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,6 +27,7 @@ import { AppComponent } from './app.component';
 import { ApiService } from './services';
 
 import {
+  AddMapComponent,
   UserListComponent,
   MapListComponent,
   UserComponent,
@@ -36,6 +39,7 @@ import {
 @NgModule({
   declarations: [
     AppComponent,
+    AddMapComponent,
     AddPlayerComponent,
     AddUserComponent,
     MapListComponent,
@@ -59,8 +63,13 @@ import {
     MatProgressBarModule,
     MatSelectModule,
     MatSnackBarModule,
+    MatFileUploadModule,
+    MatDialogModule,
     HttpClientModule,
     MomentModule
+  ],
+  entryComponents: [
+    AddMapComponent
   ],
   providers: [
     ApiService

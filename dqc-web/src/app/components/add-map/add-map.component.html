@@ -1,0 +1,14 @@
+<div class="mat-typography">
+    <div [fileUploadInputFor]="fileUploadQueue" class="upload-drop-zone">
+        Drag and drop map files to this box
+    </div>
+
+    <div class="queue-container">
+        <mat-file-upload-queue #fileUploadQueue
+            [fileAlias]="'file'"
+            [httpUrl]="fileUploadUrl" multiple>
+        
+            <mat-file-upload [file]="file" [id]="i" *ngFor="let file of fileUploadQueue.files; let i = index"></mat-file-upload>
+        </mat-file-upload-queue>
+    </div>
+</div>

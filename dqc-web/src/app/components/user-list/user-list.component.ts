@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services';
-import { UserListItem } from '../../core';
+import { ApiListItem } from '../../core';
 
 @Component({
     selector: 'app-user-list',
@@ -8,17 +8,17 @@ import { UserListItem } from '../../core';
     styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent {
-    public users: UserListItem[] = [];
+    public users: ApiListItem[] = [];
 
     constructor(
         private apiService: ApiService
     ) {
-        this.apiService.getUserList().subscribe((userList: UserListItem[]) => {
+        this.apiService.getUserList().subscribe((userList: ApiListItem[]) => {
             this.users = userList;
         });
     }
 
-    public getRoute(user: UserListItem): string {
+    public getRoute(user: ApiListItem): string {
         return `/user/${user.link}`;
     }
 }

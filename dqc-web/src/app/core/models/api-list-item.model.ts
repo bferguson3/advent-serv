@@ -1,4 +1,4 @@
-export class UserListItem {
+export class ApiListItem {
     public name: string;
     public link: string;
 }

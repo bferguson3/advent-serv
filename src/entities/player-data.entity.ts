@@ -1,4 +1,4 @@
-import { GenderType } from "../enums";
+import { GenderType, StatusEffectType } from "../enums";
 import { PlayerClassLevels } from "./player-class-levels.entity";
 
 export class PlayerData {
@@ -16,4 +16,9 @@ export class PlayerData {
     public int: number;
     public mhp: number;
     public mmp: number;
+
+    // Ephemeral stats
+    public chp: number;
+    public cmp: number;
+    public statusEffects: StatusEffectType[] = [];
 }

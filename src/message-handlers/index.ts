@@ -10,3 +10,4 @@ export { ResolveSpaceHandler } from "./resolve-space.handler";
 export { RollDiceHandler } from "./roll-dice.handler";
 export { StartGameHandler } from "./start-game.handler";
 export { UpdateLobbyCharacterHandler } from "./update-lobby-char.handler";
+export { SendCombatCommandHandler } from "./send-combat-command.handler";

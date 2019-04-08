@@ -44,9 +44,14 @@ export class StartGameHandler extends MesssageHandlerBase {
         gameState.rolls_left = mapData.dice;
         gameState.flags = [];
 
-        // start all players at tile 1
         for (const player of matchingLobby.players) {
+            // start all players at tile 1
             gameState.player_positions.push(1);
+
+            // initizliaze ephemeral player data
+            player.currentChar.chp = player.currentChar.mhp;
+            player.currentChar.cmp = player.currentChar.mmp;
+            player.currentChar.statusEffects = [];
         }
 
         if (!mapData) {

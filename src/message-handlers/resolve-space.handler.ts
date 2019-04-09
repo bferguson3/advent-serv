@@ -50,16 +50,8 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             combatState.round = 1;
             combatState.currentPlayer = lobby.gameState.active_player;
             combatState.playerTriggered = lobby.gameState.active_player;
-            combatState.enemies = [
-                {
-                    name: "Slime",
-                    hp: 4,
-                },
-                {
-                    name: "Imp",
-                    hp: 6,
-                }
-            ];
+
+            combatState.enemyGroups = GameService.generateEnemies(mapPosition);
 
             lobby.gameState.combatState = combatState;
         }

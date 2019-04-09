@@ -1,4 +1,7 @@
+import { StatusEffectType } from "../enums";
+
 export class Enemy {
-    public name: string;
-    public hp: number;
+    public chp: number;
+    public mhp: number;
+    public statusEffects: StatusEffectType[] = [];
 }

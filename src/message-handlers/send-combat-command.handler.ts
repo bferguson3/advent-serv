@@ -1,7 +1,5 @@
-import { GameLobbyModel } from "../client-models";
-import { GameClient, IResponseObject, ServerData } from "../entities";
-import { CombatCommandType, ErrorType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
-import { GameService } from "../services";
+import { CombatTurnActions, GameClient, IResponseObject, ServerData } from "../entities";
+import { ErrorType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class SendCombatCommandHandler extends MesssageHandlerBase {
@@ -25,10 +23,17 @@ export class SendCombatCommandHandler extends MesssageHandlerBase {
             );
         }
 
+        // TODO: error handling for missing data in gameObject.data
+
         const thiscombat = lobby.gameState.combatState;
         const pslot = lobby.getPlayerSlot(clientId);
-        const newAction = thiscombat.turnActions[pslot];
-        newAction.action = this.gameObject.command;
+
+        // TODO: check to make sure thiscombat.turnActions doesn't already include
+        //  an entry for this player slot
+
+        const newAction = new CombatTurnActions();
+        newAction.slot = pslot;
+        newAction.action = this.gameObject.data.command;
         // TODO: fix this
         newAction.subAction = null;
         // TODO: Add functionality to determine team type appropriately
@@ -36,13 +41,15 @@ export class SendCombatCommandHandler extends MesssageHandlerBase {
         // TODO: Add functionality to determine scope appropriately
         newAction.targetScope = TargetScopeType.Single;
         // Next two are taken from client packet
-        newAction.targetGroupNum = this.gameObject.groupnum;
-        newAction.targetNum = this.gameObject.targetnum;
+        newAction.targetGroupNum = this.gameObject.data.groupnum;
+        newAction.targetNum = this.gameObject.data.targetnum;
+
+        thiscombat.turnActions.push(newAction);
 
         const updateCombatCommandsObject = {
             type: ResponseMessageType.UpdateCombatCommands,
             visibility: VisibilityLevelType.Room,
-            lobby: new GameLobbyModel(lobby)
+            action: newAction
         };
 
         return [updateCombatCommandsObject];

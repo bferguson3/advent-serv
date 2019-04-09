@@ -2,6 +2,7 @@ import { CombatCommandType, CommandSubactionType, TargetScopeType, TargetTeamTyp
 
 export class CombatTurnActions {
     public action: CombatCommandType;
+    public slot: number;
     public subAction: CommandSubactionType;
     public targetTeam: TargetTeamType;
     public targetScope: TargetScopeType;

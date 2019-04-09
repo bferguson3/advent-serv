@@ -1,6 +1,7 @@
 export { CombatState } from "./combat-state.entity";
 export { CombatTurnActions } from "./combat-turn-actions.entity";
 export { Enemy } from "./enemy.entity";
+export { EnemyGroup } from "./enemy-group.entity";
 export { GameClient } from "./game-client.entity";
 export { GameLobby } from "./game-lobby.entity";
 export { GameState } from "./game-state.entity";

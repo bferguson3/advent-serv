@@ -1,6 +1,7 @@
 export { ClassType } from "./class-type.enum";
 export { CombatCommandType } from "./combat-command-type.enum";
 export { CommandSubactionType } from "./command-subaction-type.enum";
+export { EnemyType } from "./enemy-type.enum";
 export { ErrorType } from "./error-type.enum";
 export { GenderType } from "./gender-type.enum";
 export { TargetScopeType } from "./target-scope-type.enum";

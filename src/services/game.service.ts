@@ -1,4 +1,5 @@
-import { GameLobby, MapBoardItem, MapPosition, RollResult, ServerData } from "../entities";
+import { Enemy, EnemyGroup, GameLobby, MapBoardItem, MapPosition, RollResult, ServerData } from "../entities";
+import { EnemyType } from "../enums";
 
 export class GameService {
 
@@ -109,6 +110,45 @@ export class GameService {
         }
 
         return false;
+    }
+
+    public static generateEnemies(mapPosition: MapPosition): EnemyGroup[] {
+        const groups: EnemyGroup[] = [];
+
+        // TODO: real generation based on the mapPosition
+        // TODO: real population of stats via enemy stats
+
+        const impRoll = this.rollDice(1, 2);
+        const slimeRoll = this.rollDice(1, 2);
+
+        const impGroup = new EnemyGroup();
+        impGroup.enemyType = EnemyType.Imp;
+
+        for (let i = 0; i < impRoll.total; i++) {
+            const imp = new Enemy();
+            imp.mhp = 6;
+            imp.chp = 6;
+            imp.statusEffects = [];
+
+            impGroup.enemies.push(imp);
+        }
+
+        const slimeGroup = new EnemyGroup();
+        slimeGroup.enemyType = EnemyType.Slime;
+
+        for (let i = 0; i < slimeRoll.total; i++) {
+            const slime = new Enemy();
+            slime.mhp = 4;
+            slime.chp = 4;
+            slime.statusEffects = [];
+
+            slimeGroup.enemies.push(slime);
+        }
+
+        groups.push(impGroup);
+        groups.push(slimeGroup);
+
+        return groups;
     }
 
     private static MIN_DIE_ROLL: number = 1;

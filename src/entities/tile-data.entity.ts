@@ -1,3 +1,5 @@
+import { TerrainType } from "../enums";
+
 export class TileData {
     public Description: string;
     public ImagePath: string;
@@ -5,4 +7,5 @@ export class TileData {
     public EncounterRate: number;
     public Name: string;
     public Id: string;
+    public Terrain: TerrainType;
 }

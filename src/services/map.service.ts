@@ -1,7 +1,9 @@
 import * as fs from "fs";
-import { MapBoardItem, MapData, TileData } from "../entities";
+import { EncounterTemplate, EncounterTemplateGroup, MapBoardItem, MapData, TileData } from "../entities";
+import { EnemyType, TerrainType } from "../enums";
+import { ServiceBase } from "./service-base.service";
 
-export class MapService {
+export class MapService extends ServiceBase {
 
     // TODO: load in from env
     public static MAP_DATA_PATH: string = "./map-data";
@@ -66,7 +68,10 @@ export class MapService {
         }
     }
 
-    public static convertToMapBlob(mapData: MapData): any {
+    public static convertToMapBlob(
+        mapData: MapData,
+        skipEncounterTable: boolean = true): any {
+
         const returnData: any = {};
 
         returnData.name = mapData.Name;
@@ -84,6 +89,30 @@ export class MapService {
             });
         }
 
+        returnData.encounter_table = [];
+
+        // shouldn't need to send this back to the client at all with the map data
+        if (!skipEncounterTable) {
+            for (const encounterGroup of mapData.EnconterTable) {
+                const encounters: any[] = [];
+
+                for (const encounter of encounterGroup.encounters) {
+                    encounters.push({
+                        type: encounter.type.toString(),
+                        min: encounter.min,
+                        max: encounter.max
+                    });
+                }
+
+                if (encounters.length > 0) {
+                    returnData.encounter_table.push({
+                        terrain: encounterGroup.terrain,
+                        encounters: encounters
+                    });
+                }
+            }
+        }
+
         // TODO: update this when treasure table structure gets defined
         returnData.treasure_table = mapData.TreasureTable;
 
@@ -99,7 +128,8 @@ export class MapService {
                 description: data.Description,
                 treasure_rate: data.TreasureRate,
                 enc_rate: data.EncounterRate,
-                imagepath: data.ImagePath
+                imagepath: data.ImagePath,
+                terrain: data.Terrain
             };
         }
 
@@ -171,8 +201,62 @@ export class MapService {
         mapData.TreasureTable = mapBlob.treasure_table;
         mapData.Stars = mapBlob.stars;
         mapData.Dice = mapBlob.dice;
+        mapData.EnconterTable = this.convertFromEncounterBlob(mapBlob.encounter_table);
 
         return mapData;
+    }
+
+    private static convertFromEncounterBlob(encounterGroupBlob: any): EncounterTemplateGroup[] {
+        if (!encounterGroupBlob) {
+            return [];
+        }
+
+        const encounterGroups: EncounterTemplateGroup[] = [];
+
+        for (const encounterBlob of encounterGroupBlob) {
+            const terrainType = this.getEnumKeyByEnumValue<TerrainType>(TerrainType, encounterBlob.terrain);
+
+            if (terrainType === null) {
+                continue;
+            }
+
+            const encounterGroup: EncounterTemplateGroup = new EncounterTemplateGroup();
+            encounterGroup.terrain = terrainType;
+
+            const encounters: EncounterTemplate[] = [];
+
+            for (const templateBlob of encounterBlob.encounters) {
+                const enemyType = this.getEnumKeyByEnumValue<EnemyType>(EnemyType, templateBlob.type);
+
+                if (enemyType === null) {
+                    continue;
+                }
+
+                const template = new EncounterTemplate();
+                template.type = enemyType;
+
+                if (templateBlob.min !== undefined && templateBlob.min !== null) {
+                    template.min = templateBlob.min;
+                } else {
+                    template.min = 1;
+                }
+
+                if (templateBlob.max !== undefined && templateBlob.max !== null) {
+                    template.max = templateBlob.max;
+                } else {
+                    template.max = template.min > 1 ? template.min : 1;
+                }
+
+                encounters.push(template);
+            }
+
+            if (encounters.length > 0) {
+                encounterGroup.encounters = encounters;
+                encounterGroups.push(encounterGroup);
+            }
+        }
+
+        return encounterGroups;
     }
 
     private static convertFromBoardBlob(boardBlob: any): MapBoardItem[] {
@@ -219,6 +303,7 @@ export class MapService {
         tileData.TreasureRate = tileBlob.treasure_rate;
         tileData.EncounterRate = tileBlob.enc_rate;
         tileData.ImagePath = tileBlob.imagepath;
+        tileData.Terrain = tileBlob.terrain;
 
         return tileData;
     }

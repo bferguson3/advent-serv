@@ -3,7 +3,7 @@ import { MapBoardItem } from "./map-board-item.entity";
 
 export class MapData {
     public TreasureTable: any[] = [];
-    public EnconterTable: EncounterTemplateGroup[] = [];
+    public EncounterTable: EncounterTemplateGroup[] = [];
     public Board: MapBoardItem[] = [];
     public Name: string;
     public Stars: number;

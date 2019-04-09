@@ -93,7 +93,7 @@ export class MapService extends ServiceBase {
 
         // shouldn't need to send this back to the client at all with the map data
         if (!skipEncounterTable) {
-            for (const encounterGroup of mapData.EnconterTable) {
+            for (const encounterGroup of mapData.EncounterTable) {
                 const encounters: any[] = [];
 
                 for (const encounter of encounterGroup.encounters) {
@@ -201,7 +201,7 @@ export class MapService extends ServiceBase {
         mapData.TreasureTable = mapBlob.treasure_table;
         mapData.Stars = mapBlob.stars;
         mapData.Dice = mapBlob.dice;
-        mapData.EnconterTable = this.convertFromEncounterBlob(mapBlob.encounter_table);
+        mapData.EncounterTable = this.convertFromEncounterBlob(mapBlob.encounter_table);
 
         return mapData;
     }

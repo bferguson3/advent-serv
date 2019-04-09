@@ -119,7 +119,7 @@ export class GameService {
         // TODO: real population of stats via enemy stats
 
         const impRoll = this.rollDice(1, 2);
-        const slimeRoll = this.rollDice(1, 2);
+        const slimeRoll = this.rollDice(1, 3);
 
         const impGroup = new EnemyGroup();
         impGroup.enemyType = EnemyType.Imp;

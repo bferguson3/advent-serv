@@ -134,6 +134,7 @@ export class App {
                                     break;
                                 case RequestMessageType.SendCombatCommand:
                                     messageHandler = new SendCombatCommandHandler(gameObject, client, this.serverData);
+                                    break;
                                 default:
                                     messageHandler = new BadMessageHandler(gameObject, client, this.serverData);
                                     break;

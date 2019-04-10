@@ -131,8 +131,12 @@ export class GameService {
         const possibleEncounters: EncounterTemplateGroup[] = [];
 
         for (const encounter of mapData.EncounterTable) {
-            if (encounter.terrain === terrain || encounter.terrain === TerrainType.All) {
-                possibleEncounters.push(encounter);
+            if (encounter.terrain) {
+                const encounterTerrain = encounter.terrain.toLowerCase();
+
+                if (encounterTerrain === terrain || encounterTerrain === TerrainType.All) {
+                    possibleEncounters.push(encounter);
+                }
             }
         }
 

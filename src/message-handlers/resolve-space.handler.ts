@@ -51,7 +51,7 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             combatState.currentPlayer = lobby.gameState.active_player;
             combatState.playerTriggered = lobby.gameState.active_player;
 
-            combatState.enemyGroups = GameService.generateEnemies(mapPosition);
+            combatState.enemyGroups = GameService.generateEnemies(mapPosition, this.serverData.getMatchingMap(lobby.mapname));
 
             lobby.gameState.combatState = combatState;
         }

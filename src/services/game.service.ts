@@ -1,5 +1,5 @@
-import { Enemy, EnemyGroup, GameLobby, MapBoardItem, MapPosition, RollResult, ServerData } from "../entities";
-import { EnemyType } from "../enums";
+import { EncounterTemplate, EncounterTemplateGroup, Enemy, EnemyGroup, GameLobby, MapBoardItem, MapData, MapPosition, RollResult, ServerData } from "../entities";
+import { EnemyType, TerrainType } from "../enums";
 
 export class GameService {
 
@@ -112,43 +112,77 @@ export class GameService {
         return false;
     }
 
-    public static generateEnemies(mapPosition: MapPosition): EnemyGroup[] {
+    public static generateEnemies(
+        mapPosition: MapPosition,
+        mapData: MapData): EnemyGroup[] {
+
         const groups: EnemyGroup[] = [];
 
-        // TODO: real generation based on the mapPosition
         // TODO: real population of stats via enemy stats
 
-        const impRoll = this.rollDice(1, 2);
-        const slimeRoll = this.rollDice(1, 3);
+        let terrain: TerrainType;
 
-        const impGroup = new EnemyGroup();
-        impGroup.enemyType = EnemyType.Imp;
-
-        for (let i = 0; i < impRoll.total; i++) {
-            const imp = new Enemy();
-            imp.mhp = 6;
-            imp.chp = 6;
-            imp.statusEffects = [];
-
-            impGroup.enemies.push(imp);
+        if (mapPosition.tileData.Terrain) {
+            terrain = mapPosition.tileData.Terrain;
+        } else {
+            terrain = TerrainType.All;
         }
 
-        const slimeGroup = new EnemyGroup();
-        slimeGroup.enemyType = EnemyType.Slime;
+        const possibleEncounters: EncounterTemplateGroup[] = [];
 
-        for (let i = 0; i < slimeRoll.total; i++) {
-            const slime = new Enemy();
-            slime.mhp = 4;
-            slime.chp = 4;
-            slime.statusEffects = [];
+        for (const encounter of mapData.EncounterTable) {
+            if (encounter.terrain) {
+                const encounterTerrain = encounter.terrain.toLowerCase();
 
-            slimeGroup.enemies.push(slime);
+                if (encounterTerrain === terrain || encounterTerrain === TerrainType.All) {
+                    possibleEncounters.push(encounter);
+                }
+            }
         }
 
-        groups.push(impGroup);
-        groups.push(slimeGroup);
+        if (possibleEncounters.length > 0) {
+            const selectedEncounterIndex = (this.rollDice(1, possibleEncounters.length).total - 1);
+            const selectedEncounter = possibleEncounters[selectedEncounterIndex];
 
-        return groups;
+            for (const encounterTemplate of selectedEncounter.encounters) {
+                const encounterRoll = this.rollDice(1, encounterTemplate.max).total + (encounterTemplate.min - 1);
+
+                if (encounterRoll < 1) {
+                    continue;
+                }
+
+                const enemyGroup = new EnemyGroup();
+                enemyGroup.enemyType = encounterTemplate.type;
+                enemyGroup.enemies = [];
+
+                for (let i = 0; i < encounterRoll; i++) {
+                    const enemy = new Enemy();
+
+                    // TODO: pull this from data
+                    switch (enemyGroup.enemyType) {
+                        case EnemyType.Imp:
+                            enemy.chp = 6;
+                            enemy.mhp = 6;
+                            break;
+                        default:
+                            enemy.chp = 4;
+                            enemy.mhp = 4;
+                            break;
+                    }
+
+                    enemy.statusEffects = [];
+
+                    enemyGroup.enemies.push(enemy);
+                }
+
+                groups.push(enemyGroup);
+            }
+
+            return groups;
+        } else {
+            // we have a problem... not sure yet how to handle
+            return [];
+        }
     }
 
     private static MIN_DIE_ROLL: number = 1;

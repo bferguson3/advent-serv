@@ -49,7 +49,8 @@ export class SendCombatCommandHandler extends MesssageHandlerBase {
         const updateCombatCommandsObject = {
             type: ResponseMessageType.UpdateCombatCommands,
             visibility: VisibilityLevelType.Room,
-            action: newAction
+            action: newAction,
+            childResponses: null
         };
 
         return [updateCombatCommandsObject];

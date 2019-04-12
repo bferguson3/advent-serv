@@ -39,7 +39,8 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
         const updateLobbyCharObject = {
             type: ResponseMessageType.UpdateLobbyCharacter,
             visibility: VisibilityLevelType.Room,
-            lobby: new GameLobbyModel(curLobby)
+            lobby: new GameLobbyModel(curLobby),
+            childResponses: null
         };
 
         return [updateLobbyCharObject];

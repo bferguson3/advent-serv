@@ -255,7 +255,8 @@ export class App {
                             const responseObject = {
                                 visibility: VisibilityLevelType.Private,
                                 type: ResponseMessageType.PlayerIdleDrop,
-                                lobby: new GameLobbyModel(this.serverData.lobbies[j])
+                                lobby: new GameLobbyModel(this.serverData.lobbies[j]),
+                                childResponses: null
                             };
 
                             this.sendResponse(
@@ -277,7 +278,8 @@ export class App {
 
         const message = {
             type: ResponseMessageType.Ping,
-            visibility: VisibilityLevelType.Private
+            visibility: VisibilityLevelType.Private,
+            childResponses: null
         };
 
         this.sendResponse(client.peerRef, message, client);

@@ -34,7 +34,8 @@ export class ServerService {
         const errorResponseObject = {
             type: ResponseMessageType.Error,
             visibility: visibilityLevel,
-            error: errorType
+            error: errorType,
+            childResponses: null
         };
 
         return [errorResponseObject];

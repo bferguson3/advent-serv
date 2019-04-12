@@ -67,7 +67,8 @@ export class RollDiceHandler extends MesssageHandlerBase {
             clientId: this.client.clientId,
             dicetype: diceType,
             game: lobby.gameState,
-            result: roll
+            result: roll,
+            childResponses: null
         };
 
         return [lobbyResponseObject];

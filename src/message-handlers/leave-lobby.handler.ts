@@ -63,7 +63,8 @@ export class LeaveLobbyHandler extends MesssageHandlerBase {
         const lobbyLeftObject = {
             type: ResponseMessageType.PlayerLeft,
             visibility: VisibilityLevelType.Room,
-            lobby: new GameLobbyModel(curLobby)
+            lobby: new GameLobbyModel(curLobby),
+            childResponses: null
         };
 
         return [lobbyLeftObject];

@@ -305,5 +305,17 @@ export class App {
                 console.log(`Message sent successfully to ${clientId}`);
             }
         });
+
+        if (data.childResponses && data.childResponses.length > 0) {
+            for (const childResponse of data.childResponses) {
+                if (childResponse.delaySeconds > 0) {
+                    setTimeout(() => {
+                        this.sendResponse(peer, childResponse.responseAction, client);
+                    }, childResponse.delaySeconds * 1000);
+                } else {
+                    this.sendResponse(peer, childResponse.responseAction, client);
+                }
+            }
+        }
     }
 }

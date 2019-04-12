@@ -152,7 +152,7 @@ export class GameService {
                 }
 
                 const enemyGroup = new EnemyGroup();
-                enemyGroup.enemyType = encounterTemplate.type;
+                enemyGroup.enemyType = EnemyType[encounterTemplate.type];
                 enemyGroup.enemies = [];
 
                 for (let i = 0; i < encounterRoll; i++) {

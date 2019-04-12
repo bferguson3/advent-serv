@@ -76,7 +76,7 @@ export class StartGameHandler extends MesssageHandlerBase {
             value: approval,
             mapData: mapData,
             game: gameState,
-            childResponses: null
+            childHandlers: null
         };
 
         return [gameStarterObject];

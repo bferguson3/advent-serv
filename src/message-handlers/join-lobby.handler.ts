@@ -69,7 +69,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
                 visibility: VisibilityLevelType.Private,
                 lobby: new GameLobbyModel(joinedLobby),
                 roomslot: pslot,
-                childResponses: null
+                childHandlers: null
             };
 
             lobbyResponse.push(playerResponseObject);
@@ -79,7 +79,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
                 type: ResponseMessageType.LobbyUpdate,
                 visibility: VisibilityLevelType.Room,
                 lobby: lobbyModel,
-                childResponses: null
+                childHandlers: null
             };
 
             lobbyResponse.push(roomResponseObject);
@@ -87,7 +87,7 @@ export class JoinLobbyHandler extends MesssageHandlerBase {
             const lobbyResponseObject = {
                 type: ResponseMessageType.LobbyFull,
                 visibility: VisibilityLevelType.Private,
-                childResponses: null
+                childHandlers: null
             };
 
             lobbyResponse.push(lobbyResponseObject);

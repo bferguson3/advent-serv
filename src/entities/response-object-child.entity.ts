@@ -1,6 +1,6 @@
-import { IResponseObject } from "./i-response-object.interface";
+import { MesssageHandlerBase } from "../message-handlers/message-handler-base.handler";
 
 export class ResponseObjectChild {
     public delaySeconds: number;
-    public responseAction: IResponseObject;
+    public responseAction: MesssageHandlerBase;
 }

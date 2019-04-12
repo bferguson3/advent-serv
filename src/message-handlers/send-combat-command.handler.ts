@@ -1,6 +1,7 @@
 import { CombatTurnActions, GameClient, IResponseObject, ResponseObjectChild, ServerData } from "../entities";
 import { ErrorType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
+import { ResolveCombatHandler } from "./resolve-combat.handler";
 
 export class SendCombatCommandHandler extends MesssageHandlerBase {
 
@@ -46,27 +47,28 @@ export class SendCombatCommandHandler extends MesssageHandlerBase {
 
         thiscombat.turnActions.push(newAction);
 
-        let childResponses: ResponseObjectChild[]  = null;
+        let childHandlers: ResponseObjectChild[]  = null;
 
         if (thiscombat.turnActions.length === lobby.playerCount) {
 
-            const combatResolvedObject = {
-                type: ResponseMessageType.ResolveCombat,
-                visibility: VisibilityLevelType.Room,
-                childResponses: null
+            const childAction = new ResolveCombatHandler(
+                this.gameObject,
+                this.client,
+                this.serverData);
+
+            const combatResolvedChild: ResponseObjectChild = {
+                delaySeconds: 1,
+                responseAction: childAction
             };
 
-            childResponses = [{
-                delaySeconds: 5,
-                responseAction: combatResolvedObject
-            }];
+            childHandlers = [combatResolvedChild];
         }
 
         const updateCombatCommandsObject = {
             type: ResponseMessageType.UpdateCombatCommands,
             visibility: VisibilityLevelType.Room,
             action: newAction,
-            childResponses: childResponses
+            childHandlers: childHandlers
         };
 
         return [updateCombatCommandsObject];

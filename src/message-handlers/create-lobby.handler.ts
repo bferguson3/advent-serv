@@ -58,7 +58,7 @@ export class CreateLobbyHandler extends MesssageHandlerBase {
             type: ResponseMessageType.Lobby,
             visibility: VisibilityLevelType.Private,
             lobby: new GameLobbyModel(lobby),
-            childResponses: null
+            childHandlers: null
         };
 
         return [lobbyResponseObject];

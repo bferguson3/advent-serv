@@ -48,7 +48,7 @@ export class LoginHandler extends MesssageHandlerBase {
                     value: (true).toString(),
                     tileData: MapService.convertToTileBlob(this.serverData.tiles),
                     maps: this.serverData.mapNames,
-                    childResponses: null
+                    childHandlers: null
                 };
 
                 return [loginResponseObject];
@@ -73,7 +73,7 @@ export class LoginHandler extends MesssageHandlerBase {
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
             value: (false).toString(),
-            childResponses: null
+            childHandlers: null
         };
 
         return [loginResponseObject];

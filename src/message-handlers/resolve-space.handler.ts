@@ -62,7 +62,7 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             tileType: tileType,
             game: lobby.gameState,
             treasure: treasure,
-            childResponses: null
+            childHandlers: null
         };
 
         if (lobby.gameState.combatState) {

@@ -43,7 +43,7 @@ export class ListLobbiesHandler extends MesssageHandlerBase {
                 : Math.ceil(this.serverData.lobbies.length / this.LOBBIES_PER_PAGE),
             totalCount: this.serverData.lobbies.length,
             lobbies: lobbies,
-            childResponses: null
+            childHandlers: null
         };
 
         return [lobbyResponseObject];

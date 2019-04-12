@@ -21,7 +21,7 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
             value: this.client.playerData,
-            childResponses: null
+            childHandlers: null
         };
 
         return [playerResponse];

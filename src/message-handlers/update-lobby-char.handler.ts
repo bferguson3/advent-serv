@@ -40,7 +40,7 @@ export class UpdateLobbyCharacterHandler extends MesssageHandlerBase {
             type: ResponseMessageType.UpdateLobbyCharacter,
             visibility: VisibilityLevelType.Room,
             lobby: new GameLobbyModel(curLobby),
-            childResponses: null
+            childHandlers: null
         };
 
         return [updateLobbyCharObject];

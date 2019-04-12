@@ -11,7 +11,7 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
     public async handleMessage(): Promise<IResponseObject[]> {
 
         const responseObject = {
-            type: ResponseMessageType.ResolveSpace,
+            type: ResponseMessageType.ResolveCombat,
             visibility: VisibilityLevelType.Room,
             childHandlers: null
         };

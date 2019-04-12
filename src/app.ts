@@ -1,6 +1,6 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameLobbyModel } from "./client-models";
-import { GameClient, IResponseObject, ServerData } from "./entities";
+import { GameClient, IResponseObject, ResponseObjectChild, ServerData } from "./entities";
 import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, SendCombatCommandHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
@@ -182,6 +182,15 @@ export class App {
                                 continue;
                             }
 
+                            // peel all of the children off so they're not sent back with the message
+                            const childHandlers: ResponseObjectChild[] = [];
+
+                            if (responseObject.childHandlers) {
+                                while (responseObject.childHandlers.length) {
+                                    childHandlers.push(...responseObject.childHandlers.splice(0, 1));
+                                }
+                            }
+
                             if (responseObject.visibility === VisibilityLevelType.Room) {
                                 for (const lobby of this.serverData.lobbies) {
 
@@ -195,6 +204,18 @@ export class App {
                                 }
                             } else if (responseObject.visibility === VisibilityLevelType.Private) {
                                 this.sendResponse(peer, responseObject, client);
+                            }
+
+                            if (childHandlers.length > 0) {
+                                for (const childHandler of childHandlers) {
+                                    if (childHandler.delaySeconds > 0) {
+                                        setTimeout(() => {
+                                            this.executeMessageHandler(peer, childHandler.responseAction, client);
+                                        }, childHandler.delaySeconds * 1000);
+                                    } else {
+                                        this.executeMessageHandler(peer, childHandler.responseAction, client);
+                                    }
+                                }
                             }
                         }
                     }
@@ -313,20 +334,14 @@ export class App {
             if (err) {
                 console.log("Error sending packet");
             } else {
-                console.log(`Message sent successfully to ${clientId}`);
+                let message: string = `Message sent successfully to ${clientId}`;
+
+                if (data.type) {
+                    message += ` with message type of ${data.type}`;
+                }
+
+                console.log(message);
             }
         });
-
-        // if (data.childResponses && data.childResponses.length > 0) {
-        //     for (const childResponse of data.childResponses) {
-        //         if (childResponse.delaySeconds > 0) {
-        //             setTimeout(() => {
-        //                 this.sendResponse(peer, childResponse.responseAction, client);
-        //             }, childResponse.delaySeconds * 1000);
-        //         } else {
-        //             this.sendResponse(peer, childResponse.responseAction, client);
-        //         }
-        //     }
-        // }
     }
 }

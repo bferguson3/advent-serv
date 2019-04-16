@@ -1,7 +1,7 @@
-import { CombatActor, CombatTurnActions, Enemy, GameClient, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
-import { CombatCommandType, EnemyType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
-import { MesssageHandlerBase } from "./message-handler-base.handler";
+import { CombatActor, GameClient, IResponseObject, ServerData } from "../entities";
+import { ResponseMessageType, VisibilityLevelType } from "../enums";
 import { GameService } from "../services";
+import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class ResolveCombatHandler extends MesssageHandlerBase {
 

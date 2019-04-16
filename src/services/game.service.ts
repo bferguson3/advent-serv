@@ -163,10 +163,12 @@ export class GameService {
                         case EnemyType.Imp:
                             enemy.chp = 6;
                             enemy.mhp = 6;
+                            enemy.agi = 5;
                             break;
                         default:
                             enemy.chp = 4;
                             enemy.mhp = 4;
+                            enemy.agi = 3;
                             break;
                     }
 

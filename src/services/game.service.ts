@@ -1,5 +1,5 @@
-import { EncounterTemplate, EncounterTemplateGroup, Enemy, EnemyGroup, GameLobby, MapBoardItem, MapData, MapPosition, RollResult, ServerData } from "../entities";
-import { EnemyType, TerrainType } from "../enums";
+import { CombatTurnActions, EncounterTemplateGroup, Enemy, EnemyGroup, GameLobby, LobbyPlayerReference, MapBoardItem, MapData, MapPosition, RollResult, ServerData } from "../entities";
+import { CombatCommandType, EnemyType, TargetScopeType, TargetTeamType, TerrainType } from "../enums";
 
 export class GameService {
 
@@ -187,5 +187,30 @@ export class GameService {
         }
     }
 
+    public static determineEnemyAction(
+        enemyType: EnemyType,
+        enemy: Enemy,
+        players: LobbyPlayerReference[]): CombatTurnActions {
+
+        // TODO: pick an actual action based on enemy/enemy type
+        const action = new CombatTurnActions();
+        action.action = CombatCommandType.Attack;
+        action.targetScope = TargetScopeType.Single;
+        action.targetNum = this.determineEnemyTarget(enemyType, players);
+        action.targetTeam = TargetTeamType.Allies;
+
+        return action;
+    }
+
     private static MIN_DIE_ROLL: number = 1;
+
+    private static determineEnemyTarget(
+        enemyType: EnemyType,
+        players: LobbyPlayerReference[]): number {
+
+        // TODO: just random for now, figure out how to weight it
+        const target = Math.random() * (players.length - 1) + 1;
+
+        return target;
+    }
 }

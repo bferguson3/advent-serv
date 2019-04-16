@@ -1,6 +1,7 @@
-import { CombatActor, GameClient, IResponseObject, ServerData } from "../entities";
-import { ResponseMessageType, VisibilityLevelType } from "../enums";
+import { CombatActor, CombatTurnActions, Enemy, GameClient, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
+import { CombatCommandType, EnemyType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
+import { GameService } from "../services";
 
 export class ResolveCombatHandler extends MesssageHandlerBase {
 
@@ -17,12 +18,21 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
         const unsortedActors: CombatActor[] = [];
 
         for (const player of lobby.players) {
-            unsortedActors.push(new CombatActor(true, player.currentChar));
+            if (combatState.turnActions.length >= player.slot) {
+                unsortedActors.push(new CombatActor(true, player.currentChar, combatState.turnActions[player.slot - 1]));
+            } else {
+                // wtf something bad happened
+            }
         }
 
         for (const enemyGroup of combatState.enemyGroups) {
             for (const enemy of enemyGroup.enemies) {
-                unsortedActors.push(new CombatActor(false, enemy, enemyGroup.enemyType));
+                const action = GameService.determineEnemyAction(
+                    enemyGroup.enemyType,
+                    enemy,
+                    lobby.players);
+
+                unsortedActors.push(new CombatActor(false, enemy, action, enemyGroup.enemyType));
             }
         }
 

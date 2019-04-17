@@ -2,23 +2,29 @@ import { EnemyType } from "../enums";
 import { CombatTurnActions } from "./combat-turn-actions.entity";
 
 export class CombatActor {
+    public initiatorNum: number;
     public isPlayer: boolean;
     public actor: any;
-    public enemyType: EnemyType;
     public combatTurnActions: CombatTurnActions;
+    public enemyType: EnemyType;
+    public initiatorGroupNum: number;
 
     public calculatedSpeed: number;
 
     constructor(
+        initiatorNum: number,
         isPlayer: boolean,
         actor: any,
         combatTurnActions: CombatTurnActions,
-        enemyType: EnemyType = null) {
+        enemyType: EnemyType = null,
+        initiatorGroupNum: number = null) {
 
+        this.initiatorNum = initiatorNum;
         this.isPlayer = isPlayer;
         this.actor = actor;
         this.combatTurnActions = combatTurnActions;
         this.enemyType = enemyType;
+        this.initiatorGroupNum = initiatorGroupNum;
 
         this.calculateSpeed();
     }

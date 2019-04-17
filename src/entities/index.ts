@@ -1,4 +1,5 @@
 export { CombatActor } from "./combat-actor.entity";
+export { CombatResult } from "./combat-result.entity";
 export { CombatState } from "./combat-state.entity";
 export { CombatTurnActions } from "./combat-turn-actions.entity";
 export { EncounterTemplate } from "./encounter-template.entity";

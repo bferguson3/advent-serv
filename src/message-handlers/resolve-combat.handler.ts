@@ -1,6 +1,6 @@
 import { CombatActor, CombatResult, CombatState, GameClient, GameLobby, IResponseObject, ServerData } from "../entities";
-import { CombatCommandType, ResponseMessageType, TargetScopeType, VisibilityLevelType } from "../enums";
-import { GameService } from "../services";
+import { CombatCommandType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
+import { GameService, PlayerService } from "../services";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
 
 export class ResolveCombatHandler extends MesssageHandlerBase {
@@ -14,21 +14,31 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
         const lobby = this.serverData.getLobby(this.client.lobbyId);
         const combatState = lobby.gameState.combatState;
 
+        // update all derived stats
+        for (const player of lobby.players) {
+            PlayerService.calculateDerivedStats(player.currentChar);
+        }
+
+        // sort turn order
         const sortedActors = this.sortActors(lobby, combatState);
 
         // calculate actions
-        const combatResults = this.createCombatResults(sortedActors);
+        const combatResults = this.createCombatResults(
+            lobby,
+            sortedActors);
 
         const responseObject = {
             type: ResponseMessageType.ResolveCombat,
             visibility: VisibilityLevelType.Room,
-            childHandlers: null
+            childHandlers: null,
+            results: combatResults
         };
 
         return [responseObject];
     }
 
     private createCombatResults(
+        lobby: GameLobby,
         combatActors: CombatActor[]): CombatResult[] {
 
         const results: CombatResult[] = [];
@@ -39,6 +49,21 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
             const actorResults: CombatResult[] = [];
 
             if (action.targetScope === TargetScopeType.Single) {
+
+                let targetActor: CombatActor = null;
+
+                if (action.targetTeam === TargetTeamType.Allies) {
+                    targetActor = this.getPlayerCombatActorBySlot(action.targetNum, combatActors);
+                } else if (action.targetTeam === TargetTeamType.Enemies) {
+                    targetActor = this.getEnemyCombatActorByTargetNum(
+                        action.targetGroupNum,
+                        action.targetNum,
+                        combatActors);
+                }
+
+                if (targetActor === null) {
+                    continue;
+                }
 
                 const result = new CombatResult();
 
@@ -61,12 +86,14 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
 
                 if (action.action === CombatCommandType.Attack) {
                     result.healResult = 0;
-                    result.damageResult = this.calculateAttackDamage();
+                    result.damageResult = this.calculateAttackDamage(actor, targetActor);
                 }
 
                 actorResults.push(result);
 
                 // perform actual damage/heal/status changes on target
+                targetActor.actor.chp -= result.damageResult;
+                targetActor.actor.chp += result.healResult;
             }
 
             results.push(...actorResults);
@@ -75,8 +102,59 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
         return results;
     }
 
-    private calculateAttackDamage(): number {
-        return 0;
+    private calculateAttackDamage(
+        sourceActor: CombatActor,
+        targetActor: CombatActor): number {
+
+        if (!sourceActor || !targetActor || !sourceActor.actor || !targetActor.actor) {
+            return 0;
+        }
+
+        const sourceAtp: number = sourceActor.actor.atp;
+        const targetDfp: number = sourceActor.actor.dfp;
+        let damage: number = 0;
+
+        if (targetDfp < (sourceAtp * 0.25)) {
+            damage = sourceAtp * 2;
+        } else if (targetDfp > (sourceAtp * 4)) {
+            damage = 1;
+        } else {
+            damage = sourceAtp * (sourceAtp / (targetDfp * 2));
+        }
+
+        // see if randomization should be added or not
+        if (Math.random() >= 0.5) {
+            damage += GameService.rollDice(1, 2).total;
+        }
+
+        return Math.floor(damage);
+    }
+
+    private getPlayerCombatActorBySlot(
+        slot: number,
+        combatActors: CombatActor[]): CombatActor {
+
+        for (const actor of combatActors) {
+            if (actor.isPlayer && actor.initiatorNum === slot) {
+                return actor;
+            }
+        }
+
+        return null;
+    }
+
+    private getEnemyCombatActorByTargetNum(
+        targetGroupNum: number,
+        targetNum: number,
+        combatActors: CombatActor[]): CombatActor {
+
+        for (const actor of combatActors) {
+            if (!actor.isPlayer && actor.initiatorGroupNum === targetGroupNum && actor.initiatorNum === targetNum) {
+                return actor;
+            }
+        }
+
+        return null;
     }
 
     private sortActors(

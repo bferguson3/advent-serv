@@ -13,6 +13,7 @@ export class RequestCharacterDataHandler extends MesssageHandlerBase {
         for (const player of this.client.playerData) {
             const stats = PlayerService.calculateStats(player);
             PlayerService.populatePlayerStats(player, stats);
+            PlayerService.calculateDerivedStats(player);
         }
 
         // TODO: this will be pulled from a local database

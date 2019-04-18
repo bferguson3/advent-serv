@@ -164,11 +164,15 @@ export class GameService {
                             enemy.chp = 6;
                             enemy.mhp = 6;
                             enemy.agi = 5;
+                            enemy.atp = 6;
+                            enemy.dfp = 5;
                             break;
                         default:
                             enemy.chp = 4;
                             enemy.mhp = 4;
                             enemy.agi = 3;
+                            enemy.atp = 4;
+                            enemy.dfp = 4;
                             break;
                     }
 

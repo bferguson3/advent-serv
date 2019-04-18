@@ -84,4 +84,14 @@ export class PlayerService {
 
         return cPlayer;
     }
+
+    public static calculateDerivedStats(player: PlayerData): void {
+        player.atp = Math.floor((player.str * 0.75) + (player.agi * 0.25));
+        player.dfp = Math.floor((player.str * 0.3) + (player.agi * 0.3));
+        player.atk = Math.floor((player.str * 0.25) + (player.agi * 0.75));
+        player.mat = Math.floor((player.int * 0.8) + (player.agi * 0.2));
+        player.mdf = Math.floor((player.int * 0.5) + (player.agi * 0.5));
+        player.avd = Math.floor(player.agi / 10);
+        player.luc = Math.floor(((player.agi * 0.75) + (player.int * 0.25)) / 2);
+    }
 }

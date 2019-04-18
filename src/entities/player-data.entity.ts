@@ -20,5 +20,13 @@ export class PlayerData {
     // Ephemeral stats
     public chp: number;
     public cmp: number;
+    public atp: number;
+    public dfp: number;
+    public atk: number;
+    public mat: number;
+    public mdf: number;
+    public avd: number;
+    public luc: number;
+
     public statusEffects: StatusEffectType[] = [];
 }

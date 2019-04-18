@@ -17,7 +17,8 @@ export class GameStateHandler extends MesssageHandlerBase {
                 const updateLobbyCharObject = {
                     type: ResponseMessageType.GameState,
                     visibility: VisibilityLevelType.Private,
-                    game: lobby.gameState
+                    game: lobby.gameState,
+                    childHandlers: null
                 };
 
                 return [updateLobbyCharObject];

@@ -61,7 +61,8 @@ export class ResolveSpaceHandler extends MesssageHandlerBase {
             visibility: VisibilityLevelType.Room,
             tileType: tileType,
             game: lobby.gameState,
-            treasure: treasure
+            treasure: treasure,
+            childHandlers: null
         };
 
         if (lobby.gameState.combatState) {

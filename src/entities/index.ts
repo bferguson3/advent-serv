@@ -1,3 +1,5 @@
+export { CombatActor } from "./combat-actor.entity";
+export { CombatResult } from "./combat-result.entity";
 export { CombatState } from "./combat-state.entity";
 export { CombatTurnActions } from "./combat-turn-actions.entity";
 export { EncounterTemplate } from "./encounter-template.entity";
@@ -16,6 +18,7 @@ export { PasswordData } from "./password-data.entity";
 export { PlayerClassLevels } from "./player-class-levels.entity";
 export { PlayerData } from "./player-data.entity";
 export { PlayerStats } from "./player-stats.entity";
+export { ResponseObjectChild } from "./response-object-child.entity";
 export { RollResult } from "./roll-result.entity";
 export { ServerData } from "./server-data.entity";
 export { TileData } from "./tile-data.entity";

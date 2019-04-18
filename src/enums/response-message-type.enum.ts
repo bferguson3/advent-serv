@@ -48,5 +48,8 @@ export enum ResponseMessageType {
     ResolveSpace = "space_resolved",
 
     // share combat selection with entire room
-    UpdateCombatCommands = "update_combat_commands"
+    UpdateCombatCommands = "update_combat_commands",
+
+    // the play by play results of combat
+    ResolveCombat = "combat_resolved"
 }

@@ -75,7 +75,8 @@ export class StartGameHandler extends MesssageHandlerBase {
             visibility: VisibilityLevelType.Room,
             value: approval,
             mapData: mapData,
-            game: gameState
+            game: gameState,
+            childHandlers: null
         };
 
         return [gameStarterObject];

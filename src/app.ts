@@ -1,6 +1,6 @@
 import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameLobbyModel } from "./client-models";
-import { GameClient, IResponseObject, ServerData } from "./entities";
+import { GameClient, IResponseObject, ResponseObjectChild, ServerData } from "./entities";
 import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, SendCombatCommandHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
@@ -142,48 +142,10 @@ export class App {
                         }
                     }
 
-                    try {
-                        if (messageHandler !== null) {
-                            const responseObjectsPromise: Promise<IResponseObject[]> = messageHandler.handleMessage();
-
-                            responseObjectsPromise.then((responseObjects: IResponseObject[]) => {
-                                if (responseObjects) {
-                                    for (const responseObject of responseObjects) {
-                                        if (!responseObject) {
-                                            continue;
-                                        }
-
-                                        if (responseObject.visibility === VisibilityLevelType.Room) {
-                                            for (const lobby of this.serverData.lobbies) {
-
-                                                if (lobby.id === client.lobbyId) {
-                                                    for (const player of lobby.players) {
-                                                        const user = this.serverData.getUser(player.clientId);
-                                                        this.sendResponse(user.peerRef, responseObject, user);
-                                                    }
-                                                    break;
-                                                }
-                                            }
-                                        } else if (responseObject.visibility === VisibilityLevelType.Private) {
-                                            this.sendResponse(peer, responseObject, client);
-                                        }
-                                    }
-                                }
-                            }, (rejectionReason) => {
-                                const errors = ServerService.createErrorMessage(
-                                    VisibilityLevelType.Private,
-                                    ErrorType.GeneralServerError);
-
-                                this.sendResponse(peer, errors[0], client);
-                            });
-                        }
-                    } catch (err) {
-                        const errors = ServerService.createErrorMessage(
-                            VisibilityLevelType.Private,
-                            ErrorType.GeneralServerError);
-
-                        this.sendResponse(peer, errors[0], client);
-                    }
+                    this.executeMessageHandler(
+                        peer,
+                        messageHandler,
+                        client);
                 });
             });
 
@@ -202,6 +164,76 @@ export class App {
         }
 
         this.gameServer.stop();
+    }
+
+    private executeMessageHandler(
+        peer: any,
+        messageHandler: MesssageHandlerBase,
+        client: GameClient): void {
+
+        try {
+            if (messageHandler !== null) {
+                const responseObjectsPromise: Promise<IResponseObject[]> = messageHandler.handleMessage();
+
+                responseObjectsPromise.then((responseObjects: IResponseObject[]) => {
+                    if (responseObjects) {
+                        for (const responseObject of responseObjects) {
+                            if (!responseObject) {
+                                continue;
+                            }
+
+                            // peel all of the children off so they're not sent back with the message
+                            const childHandlers: ResponseObjectChild[] = [];
+
+                            if (responseObject.childHandlers) {
+                                while (responseObject.childHandlers.length) {
+                                    childHandlers.push(...responseObject.childHandlers.splice(0, 1));
+                                }
+                            }
+
+                            if (responseObject.visibility === VisibilityLevelType.Room) {
+                                for (const lobby of this.serverData.lobbies) {
+
+                                    if (lobby.id === client.lobbyId) {
+                                        for (const player of lobby.players) {
+                                            const user = this.serverData.getUser(player.clientId);
+                                            this.sendResponse(user.peerRef, responseObject, user);
+                                        }
+                                        break;
+                                    }
+                                }
+                            } else if (responseObject.visibility === VisibilityLevelType.Private) {
+                                this.sendResponse(peer, responseObject, client);
+                            }
+
+                            if (childHandlers.length > 0) {
+                                for (const childHandler of childHandlers) {
+                                    if (childHandler.delaySeconds > 0) {
+                                        setTimeout(() => {
+                                            this.executeMessageHandler(peer, childHandler.responseAction, client);
+                                        }, childHandler.delaySeconds * 1000);
+                                    } else {
+                                        this.executeMessageHandler(peer, childHandler.responseAction, client);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, (rejectionReason) => {
+                    const errors = ServerService.createErrorMessage(
+                        VisibilityLevelType.Private,
+                        ErrorType.GeneralServerError);
+
+                    this.sendResponse(peer, errors[0], client);
+                });
+            }
+        } catch (err) {
+            const errors = ServerService.createErrorMessage(
+                VisibilityLevelType.Private,
+                ErrorType.GeneralServerError);
+
+            this.sendResponse(peer, errors[0], client);
+        }
     }
 
     // TODO: make this async so it doesn't block anything else
@@ -255,7 +287,8 @@ export class App {
                             const responseObject = {
                                 visibility: VisibilityLevelType.Private,
                                 type: ResponseMessageType.PlayerIdleDrop,
-                                lobby: new GameLobbyModel(this.serverData.lobbies[j])
+                                lobby: new GameLobbyModel(this.serverData.lobbies[j]),
+                                childHandlers: null
                             };
 
                             this.sendResponse(
@@ -277,7 +310,8 @@ export class App {
 
         const message = {
             type: ResponseMessageType.Ping,
-            visibility: VisibilityLevelType.Private
+            visibility: VisibilityLevelType.Private,
+            childHandlers: null
         };
 
         this.sendResponse(client.peerRef, message, client);
@@ -300,7 +334,13 @@ export class App {
             if (err) {
                 console.log("Error sending packet");
             } else {
-                console.log(`Message sent successfully to ${clientId}`);
+                let message: string = `Message sent successfully to ${clientId}`;
+
+                if (data.type) {
+                    message += ` with message type of ${data.type}`;
+                }
+
+                console.log(message);
             }
         });
     }

@@ -1,4 +1,4 @@
-import { CombatActor, CombatResult, CombatState, GameClient, GameLobby, IResponseObject, ServerData } from "../entities";
+import { CombatActor, CombatResult, CombatState, GameClient, GameLobby, IResponseObject, LobbyPlayerReference, ServerData } from "../entities";
 import { CombatCommandType, ResponseMessageType, TargetScopeType, TargetTeamType, VisibilityLevelType } from "../enums";
 import { GameService, PlayerService } from "../services";
 import { MesssageHandlerBase } from "./message-handler-base.handler";
@@ -27,11 +27,17 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
             lobby,
             sortedActors);
 
+        // send current player character states
+        const players = lobby.players.map((playerRef: LobbyPlayerReference) => {
+            return playerRef.currentChar;
+        });
+
         const responseObject = {
             type: ResponseMessageType.ResolveCombat,
             visibility: VisibilityLevelType.Room,
             childHandlers: null,
-            results: combatResults
+            results: combatResults,
+            playerData: players
         };
 
         return [responseObject];

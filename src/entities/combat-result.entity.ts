@@ -3,6 +3,7 @@ import { CombatCommandType, CommandSubactionType, StatusEffectType, TargetTeamTy
 export class CombatResult {
     public initiatorGroupNum: number; // group of the enemy that initiated the action / null for players
     public initiatorNum: number; // # of enemy / slot of player that initiated the action
+    public initiatorTeam: TargetTeamType; // which team the initiator is on
 
     public targetTeam: TargetTeamType;
     public targetGroupNum: number; // will be null for players

@@ -74,8 +74,9 @@ export class ResolveCombatHandler extends MesssageHandlerBase {
                 const result = new CombatResult();
 
                 // initiator details
-                result.initiatorNum = result.initiatorNum;
-                result.initiatorGroupNum = result.initiatorGroupNum;
+                result.initiatorNum = actor.initiatorNum;
+                result.initiatorGroupNum = actor.initiatorGroupNum;
+                result.initiatorTeam = actor.isPlayer ? TargetTeamType.Allies : TargetTeamType.Enemies;
 
                 // action details
                 result.action = action.action;

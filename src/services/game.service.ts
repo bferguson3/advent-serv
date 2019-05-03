@@ -202,6 +202,7 @@ export class GameService {
         action.targetScope = TargetScopeType.Single;
         action.targetNum = this.determineEnemyTarget(enemyType, players);
         action.targetTeam = TargetTeamType.Allies;
+        action.targetGroupNum = 1; // this will be set to 99 for group targeted attacks
 
         return action;
     }

@@ -11,12 +11,11 @@
   "scripts": {
     "build": "tsc",
     "run-app": "node ./dist/index",
-    "serve": "run-s build run-app",
+    "start": "run-s build run-app",
     "install-web-deps": "cd dqc-web && npm install",
     "build-web": "cd dqc-web && ng build",
     "run-web": "node ./dqc-web/server.js",
-    "start-web": "run-s install-web-deps build-web run-web",
-    "start": "npm run serve"
+    "start-web": "run-s install-web-deps build-web run-web"
   },
   "dependencies": {
     "@angular/cli": "^7.3.6",

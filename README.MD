@@ -2,10 +2,16 @@
 
 [![Build status](https://joshlbeard.visualstudio.com/dqc-sugoroku-server/_apis/build/status/dqc-sugoroku-server-CI?branchName=master)](https://joshlbeard.visualstudio.com/dqc-sugoroku-server/_build/latest?definitionId=12)
 
+
+### Dependencies
+```
+$ sudo apt install nodejs
+$ sudo apt-get install npm
+```
 ### Usage
 ```
-npm install
-npm run serve
+$ npm install
+$ npm run serve
 ```
 
 ### Commands

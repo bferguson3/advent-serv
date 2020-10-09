@@ -18,7 +18,7 @@ export class RequestPeerPingHandler extends MesssageHandlerBase {
         */
         // TODO: this will be pulled from a local database
         const playerResponse = {
-            type: ResponseMessageType.PlayerData,
+            type: ResponseMessageType.PingResponse,
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
             value: this.client.lastActivity,

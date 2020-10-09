@@ -20,6 +20,8 @@ export enum ResponseMessageType {
     // expects 'pong' in response
     Ping = "ping",
 
+    PingResponse = "ping_response",
+
     // contains minimal char info to broadcast to whole lobby
     UpdateLobbyCharacter = "update_lobby_character",
 

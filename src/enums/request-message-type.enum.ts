@@ -11,5 +11,6 @@ export enum RequestMessageType {
     RollDice = "roll_dice",
     GameState = "request_game_state",
     ResolveSpace = "resolve_space",
-    SendCombatCommand = "send_combat_sel"
+    SendCombatCommand = "send_combat_sel",
+    GetPing = "get_ping"
 }

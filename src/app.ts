@@ -2,7 +2,7 @@ import { Address, createServer, Host, Packet, Peer} from "enet";
 import { GameLobbyModel } from "./client-models";
 import { GameClient, IResponseObject, ResponseObjectChild, ServerData } from "./entities";
 import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, SendCombatCommandHandler, StartGameHandler, UpdateLobbyCharacterHandler } from "./message-handlers";
+import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, SendCombatCommandHandler, StartGameHandler, UpdateLobbyCharacterHandler, RequestPeerPingHandler } from "./message-handlers";
 import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
 import { MapService, ServerService } from "./services";
 
@@ -104,6 +104,9 @@ export class App {
                                 case RequestMessageType.Pong:
                                     // basically just do nothing other than update the activity time
                                     return;
+                                case RequestMessageType.GetPing:
+                                    messageHandler = new RequestPeerPingHandler(gameObject, client, this.serverData);
+                                    break;
                                 case RequestMessageType.RequestCharacterData:
                                     messageHandler = new RequestCharacterDataHandler(gameObject, client, this.serverData);
                                     break;

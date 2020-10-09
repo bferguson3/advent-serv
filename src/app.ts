@@ -85,7 +85,9 @@ export class App {
                     client.lastActivity = ServerService.getUtcTimestamp();
                     const gameObject = JSON.parse(packet.data().toString());
 
-                    console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
+                    if (gameObject.message_type != RequestMessageType.Pong) {
+                        console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
+                    }
 
                     const messageType = gameObject.message_type;
 

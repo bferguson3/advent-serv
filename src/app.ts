@@ -11,7 +11,7 @@ export class App {
     public serverData: ServerData = new ServerData();
     public gameServer: Host;
 
-    private addr = new Address("0.0.0.0", 9521);
+    private addr = new Address("0.0.0.0", 33111);
     private peerCount: number = 32;
     private channelCount: number = 2;
     private downLimit: number = 0;

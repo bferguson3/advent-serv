@@ -19,8 +19,8 @@ export class App {
     private loopIntervalMs: number = 50;
     private maintenanceIntervalHandleId: number;
     private maintenanceIntervalPeriod: number = 1000;
-    private clientInactivityThresholdMs: number = 60000;
-    private clientPingThresholdMs: number = 10000;
+    private clientInactivityThresholdMs: number = 10000;
+    private clientPingThresholdMs: number = 1000;
 
     public async start(): Promise<void> {
         try {
@@ -251,8 +251,10 @@ export class App {
 
                 if (lastActivityDelta >= this.clientInactivityThresholdMs) {
                     prunedClientIds.push(this.serverData.clients[i].clientId);
+                    console.log(`User ${this.serverData.clients[i].clientId} pruned for inactivity.`);
                     this.serverData.clients.splice(i, 1);
-                } else if (lastActivityDelta >= this.clientPingThresholdMs) {
+                } 
+                if (lastActivityDelta >= this.clientPingThresholdMs) {
                     this.sendPing(this.serverData.clients[i]);
                 }
             }
@@ -326,14 +328,29 @@ export class App {
         }
 
         peer.send(0, jsonResponse, (err: any) => {
-            // don't log if ping
-            if (data.type === ResponseMessageType.Ping) {
-                return;
-            }
-
             if (err) {
-                console.log("Error sending packet");
+                if (data.type === ResponseMessageType.Ping) {
+                    // Remove user fallback if Maintenance does not prune user:
+                    /*
+                    let i = this.serverData.clients.length;
+                    while (i--) {
+                        if (this.serverData.clients[i].clientId == clientId) {
+                            //prunedClientIds.push(this.serverData.clients[i].clientId);
+                            this.serverData.clients.splice(i, 1);
+                            console.log(`User ${clientId} removed for non-response.`)
+                            break;
+                        }
+                    }
+                    */
+                } else {
+                    console.log("Error sending packet!");
+                }
             } else {
+                // don't log if ping
+                if (data.type === ResponseMessageType.Ping) {
+                    return;
+                }
+    
                 let message: string = `Message sent successfully to ${clientId}`;
 
                 if (data.type) {

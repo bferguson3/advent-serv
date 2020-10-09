@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "run-app": "node ./dist/index",
-    "start": "run-s build run-app",
+    "serve": "run-s build run-app",
     "install-web-deps": "cd dqc-web && npm install",
     "build-web": "cd dqc-web && ng build",
     "run-web": "node ./dqc-web/server.js",

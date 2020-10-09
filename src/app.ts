@@ -85,7 +85,7 @@ export class App {
                     client.lastActivity = ServerService.getUtcTimestamp();
                     const gameObject = JSON.parse(packet.data().toString());
 
-                    if (gameObject.message_type != RequestMessageType.Pong) {
+                    if (gameObject.message_type != RequestMessageType.GetPing) {
                         console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
                     }
 
@@ -99,13 +99,12 @@ export class App {
                     } else {
                         // non anonymous handlers - check auth hash
                         // TODO: make sure hash matches
-                        if (client.authenticationHash) {
+                        //if (client.authenticationHash) {
                             switch (messageType) {
                                 case RequestMessageType.Pong:
                                     // basically just do nothing other than update the activity time
                                     return;
                                 case RequestMessageType.GetPing:
-                                    console.log("WHAT");
                                     messageHandler = new RequestPeerPingHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.RequestCharacterData:
@@ -145,7 +144,7 @@ export class App {
                                     messageHandler = new BadMessageHandler(gameObject, client, this.serverData);
                                     break;
                             }
-                        }
+                        //}
                     }
 
                     this.executeMessageHandler(
@@ -353,7 +352,7 @@ export class App {
                 }
             } else {
                 // don't log if ping
-                if (data.type === ResponseMessageType.Ping) {
+                if (data.type === ResponseMessageType.PingResponse) {
                     return;
                 }
     

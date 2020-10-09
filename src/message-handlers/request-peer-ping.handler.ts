@@ -9,15 +9,8 @@ export class RequestPeerPingHandler extends MesssageHandlerBase {
     }
 
     public async handleMessage(): Promise<IResponseObject[]> {
-        /*
-        for (const player of this.client.playerData) {
-            const stats = PlayerService.calculateStats(player);
-            PlayerService.populatePlayerStats(player, stats);
-            PlayerService.calculateDerivedStats(player);
-        }
-        */
-        // TODO: this will be pulled from a local database
-        const playerResponse = {
+        
+        const pingResponse = {
             type: ResponseMessageType.PingResponse,
             visibility: VisibilityLevelType.Private,
             clientId: this.client.clientId,
@@ -25,6 +18,6 @@ export class RequestPeerPingHandler extends MesssageHandlerBase {
             childHandlers: null
         };
 
-        return [playerResponse];
+        return [pingResponse];
     }
 }

@@ -105,6 +105,7 @@ export class App {
                                     // basically just do nothing other than update the activity time
                                     return;
                                 case RequestMessageType.GetPing:
+                                    console.log("WHAT");
                                     messageHandler = new RequestPeerPingHandler(gameObject, client, this.serverData);
                                     break;
                                 case RequestMessageType.RequestCharacterData:

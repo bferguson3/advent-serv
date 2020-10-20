@@ -8,7 +8,7 @@ $ sudo apt-get install npm
 ### Usage
 ```
 $ npm install
-$ npm run serve
+$ npm start
 ```
 
 ### Commands
@@ -27,7 +27,7 @@ Below is a list of commands.
         type: string = "ping_response",
         visibility: string = "private",
         playerId: integer = [player's peer identification],
-        lastActivity: Date? = [player's last message receipt UTC Date/Time]
+        lastActivity: integer? = [player's last message receipt UTC timestamp]
     }
     ```
 

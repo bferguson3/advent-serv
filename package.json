@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "run-app": "node ./dist/index",
-    "start": "run-s build run-app"
+    "start": "run-s build run-app",
+    "serve": "run-s build run-app"
   },
   "repository": {
     "type": "git",

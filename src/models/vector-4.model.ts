@@ -1,18 +1,18 @@
 import { Vector3 } from "./vector-3.model";
 
 export class Vector4 extends Vector3 {
-    public r: number;
+    public w: number;
 
     constructor(
         x: number = null,
         y: number = null,
         z: number = null,
-        r: number = null) {
+        w: number = null) {
 
         super(x, y, z);
 
-        if (r != null) {
-            this.r = r;
+        if (w != null) {
+            this.w = w;
         }
     }
 }

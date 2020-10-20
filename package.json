@@ -1,40 +1,31 @@
 {
-  "name": "dqc-sugoroku-server",
+  "name": "advent-serv",
   "version": "1.0.0",
-  "author": "Josh Beard",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jlbeard84/dqc-sugoroku-server.git"
-  },
-  "license": "UNLICENSED",
-  "private": true,
+  "description": "Server for InAdvent multiplayer game",
   "scripts": {
     "build": "tsc",
     "run-app": "node ./dist/index",
-    "serve": "run-s build run-app",
-    "install-web-deps": "cd dqc-web && npm install",
-    "build-web": "cd dqc-web && ng build",
-    "run-web": "node ./dqc-web/server.js",
-    "start-web": "run-s install-web-deps build-web run-web"
+    "start": "run-s build run-app"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlbeard84/advent-serv.git"
+  },
+  "author": "Barely Conscious Software",
+  "license": "UNLICENSED",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/jlbeard84/advent-serv/issues"
+  },
+  "homepage": "https://github.com/jlbeard84/advent-serv#readme",
   "dependencies": {
-    "@angular/cli": "^7.3.6",
-    "babel-preset-env": "1.7.0",
-    "babel-register": "6.26.0",
-    "cookie-parser": "1.4.3",
-    "debug": "2.6.9",
-    "enet": "0.2.9",
-    "express": "4.16.0",
-    "http-errors": "1.6.2",
-    "morgan": "1.9.1",
-    "pbkdf2": "3.0.17",
-    "pug": "2.0.0-beta11"
+    "enet": "^0.2.9"
   },
   "devDependencies": {
-    "@types/node": "11.10.4",
-    "@types/pbkdf2": "3.0.0",
-    "npm-run-all": "4.1.5",
-    "tslint": "5.12.1",
-    "typescript": "3.3.3"
+    "@types/node": "^14.14.0",
+    "npm-run-all": "^4.1.5",
+    "tsc": "^1.20150623.0",
+    "tslint": "^6.1.3",
+    "typescript": "^4.0.3"
   }
 }

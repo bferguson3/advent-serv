@@ -1,15 +1,2 @@
-export { BadMessageHandler } from "./bad-message.handler";
-export { CreateLobbyHandler } from "./create-lobby.handler";
-export { GameStateHandler } from "./game-state.handler";
-export { JoinLobbyHandler} from "./join-lobby.handler";
-export { LeaveLobbyHandler } from "./leave-lobby.handler";
-export { ListLobbiesHandler } from "./list-lobbies.handler";
-export { LoginHandler } from "./login.handler";
-export { RequestCharacterDataHandler } from "./request-character-data.handler";
-export { ResolveCombatHandler } from "./resolve-combat.handler";
-export { ResolveSpaceHandler } from "./resolve-space.handler";
-export { RollDiceHandler } from "./roll-dice.handler";
-export { StartGameHandler } from "./start-game.handler";
-export { UpdateLobbyCharacterHandler } from "./update-lobby-char.handler";
-export { SendCombatCommandHandler } from "./send-combat-command.handler";
-export { RequestPeerPingHandler } from "./request-peer-ping.handler";
+export { MessageHandlerBase } from "./message-handler-base.handler"; 
+export { PingMessageHandler } from "./ping-message-handler.handler";

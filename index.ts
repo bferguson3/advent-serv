@@ -3,5 +3,5 @@ import { App } from "./src/app";
 const app = new App();
 
 app.start().then(() => {
-    console.log("Async Loading Complete");
+    console.log("App load complete");
 });

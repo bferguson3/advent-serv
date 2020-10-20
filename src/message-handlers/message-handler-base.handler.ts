@@ -1,24 +1,16 @@
-import { GameClient, IResponseObject, ServerData } from "../entities";
-import { ErrorType, VisibilityLevelType } from "../enums";
-import { ServerService } from "../services";
+import { IResponseObject } from "../interfaces";
+import { Player, ServerData } from "../models";
 
-export abstract class MesssageHandlerBase {
+export abstract class MessageHandlerBase {
     public gameObject: any;
-    public client: GameClient;
+    public player: Player;
     public serverData: ServerData;
 
-    constructor(gameObject: any, client: GameClient, serverData: ServerData) {
+    constructor(gameObject: any, player: Player, serverData: ServerData) {
         this.gameObject = gameObject;
-        this.client = client;
+        this.player = player;
         this.serverData = serverData;
     }
 
     public abstract handleMessage(): Promise<IResponseObject[]>;
-
-    protected createError(
-        visibilityLevel: VisibilityLevelType,
-        errorType: ErrorType
-    ): IResponseObject[] {
-        return ServerService.createErrorMessage(visibilityLevel, errorType);
-    }
 }

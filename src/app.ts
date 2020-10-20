@@ -1,48 +1,24 @@
-import { Address, createServer, Host, Packet, Peer} from "enet";
-import { GameLobbyModel } from "./client-models";
-import { GameClient, IResponseObject, ResponseObjectChild, ServerData } from "./entities";
-import { ErrorType, RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
-import { BadMessageHandler, CreateLobbyHandler, GameStateHandler, JoinLobbyHandler, LeaveLobbyHandler, ListLobbiesHandler, LoginHandler, RequestCharacterDataHandler, ResolveSpaceHandler, RollDiceHandler, SendCombatCommandHandler, StartGameHandler, UpdateLobbyCharacterHandler, RequestPeerPingHandler } from "./message-handlers";
-import { MesssageHandlerBase } from "./message-handlers/message-handler-base.handler";
-import { MapService, ServerService } from "./services";
+import { Address, createServer, Host, Packet, Peer } from "enet";
+import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
+import { IResponseObject } from "./interfaces";
+import { MessageHandlerBase, PingMessageHandler } from "./message-handlers";
+import { Player, ServerData } from "./models";
+import { ServerService } from "./services";
 
 export class App {
 
-    public serverData: ServerData = new ServerData();
-    public gameServer: Host;
+    private readonly addr = new Address("0.0.0.0", 33111);
+    private readonly peerCount: number = 64;
+    private readonly channelCount: number = 2;
+    private readonly downLimit: number = 0;
+    private readonly upLimit: number = 0;
+    private readonly loopIntervalMs: number = 10;
+    private readonly serverData: ServerData = new ServerData(this.peerCount);
 
-    private addr = new Address("0.0.0.0", 33111);
-    private peerCount: number = 32;
-    private channelCount: number = 2;
-    private downLimit: number = 0;
-    private upLimit: number = 0;
-    private loopIntervalMs: number = 50;
-    private maintenanceIntervalHandleId: number;
-    private maintenanceIntervalPeriod: number = 1000;
-    private clientInactivityThresholdMs: number = 10000;
-    private clientPingThresholdMs: number = 1000;
+    private gameServer: Host;
 
     public async start(): Promise<void> {
-        try {
-            console.log("Loading Tiles...");
-            this.serverData.tiles = await MapService.loadTileData();
-            console.log(`${this.serverData.tiles.length} Tiles Loaded`);
-        } catch (err) {
-            console.log("Error loading tiles", err);
-            throw err;
-        }
-
-        try {
-            console.log("Loading Maps...");
-            this.serverData.maps = await MapService.loadAllMaps(this.serverData.tiles);
-            this.serverData.populateMapNames();
-            console.log(`${this.serverData.maps.length} Maps Loaded`);
-        } catch (err) {
-            console.log("Error loading maps", err);
-            throw err;
-        }
-
-        console.log("Starting Server...");
+        console.log("Starting server...");
 
         this.gameServer = createServer({
             address: this.addr,
@@ -57,124 +33,71 @@ export class App {
             }
 
             host.on("connect", (peer: Peer, data: any) => {
+                console.log(`Peer ${peer._pointer} connected`);
 
-                const newClientId = ServerService.createClientId();
+                const newPlayer = new Player();
+                newPlayer.id = peer._pointer;
+                newPlayer.lastActivity = ServerService.GetCurrentUtcDate();
 
-                console.log(`Peer ${peer._pointer} connected and given ${newClientId}`);
+                this.serverData.players[peer._pointer] = newPlayer;
 
-                peer.clientId = newClientId;
-
-                const newClient: GameClient = new GameClient();
-                newClient.clientId = newClientId;
-                newClient.peerRef = peer;
-                newClient.lastActivity = ServerService.getUtcTimestamp();
-                newClient.authenticationHash = null;
-
-                this.serverData.clients.push(newClient);
+                peer.on("disconnect", () => {
+                    this.serverData.players[peer._pointer] = null;
+                });
 
                 peer.on("message", (packet: Packet, channel: number) => {
-                    const clientId = peer.clientId;
-                    const client = this.serverData.getUser(clientId);
+                    const player = this.serverData.players[peer._pointer];
 
-                    if (!client) {
-                        const error = ServerService.createErrorMessage(VisibilityLevelType.Private, ErrorType.ClientTimeout);
-                        this.sendResponse(peer, error[0], null);
-                        return;
+                    if (!player) {
+                        peer.disconnectNow();
                     }
 
-                    client.lastActivity = ServerService.getUtcTimestamp();
-                    const gameObject = JSON.parse(packet.data().toString());
+                    player.lastActivity = ServerService.GetCurrentUtcDate();
 
-                    if (gameObject.message_type != RequestMessageType.GetPing) {
-                        console.log(`Got packet from ${client.clientId} with message_type of ${gameObject.message_type}`);
+                    try {
+                        const gameObject = JSON.parse(packet.data().toString());
+
+                        if (gameObject.message_type !== RequestMessageType.Ping) {
+                            console.log(`Got packet from ${player.id} with message_type of ${gameObject.message_type}`);
+                        }
+
+                        let messageHandler: MessageHandlerBase = null;
+
+                        switch (gameObject.message_type) {
+                            case RequestMessageType.Ping:
+                                messageHandler = new PingMessageHandler(gameObject, player, this.serverData);
+                                break;
+                            case RequestMessageType.Pong:
+                                // basically just do nothing other than update the activity time
+                                break;
+                            default:
+                                // unsupported messaage
+                                throw new Error("Unsupported message");
+                                break;
+                        }
+
+                        this.executeMessageHandler(
+                            peer,
+                            messageHandler,
+                            player);
+
+                    } catch(err) {
+                        console.log(`Received malformed packet data from Peer ${peer._pointer}`);
+                        console.log(err);
+                        peer.disconnectNow();
                     }
-
-                    const messageType = gameObject.message_type;
-
-                    let messageHandler: MesssageHandlerBase = null;
-
-                    // anonymous handlers (login)
-                    if (messageType === RequestMessageType.Login) {
-                        messageHandler = new LoginHandler(gameObject, client, this.serverData);
-                    } else {
-                        // non anonymous handlers - check auth hash
-                        // TODO: make sure hash matches
-                        //if (client.authenticationHash) {
-                            switch (messageType) {
-                                case RequestMessageType.Pong:
-                                    // basically just do nothing other than update the activity time
-                                    return;
-                                case RequestMessageType.GetPing:
-                                    messageHandler = new RequestPeerPingHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.RequestCharacterData:
-                                    messageHandler = new RequestCharacterDataHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.ListLobbies:
-                                    messageHandler = new ListLobbiesHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.CreateLobby:
-                                    messageHandler = new CreateLobbyHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.JoinLobby:
-                                    messageHandler = new JoinLobbyHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.LeaveLobby:
-                                    messageHandler = new LeaveLobbyHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.SelectLobbyCharacter:
-                                    messageHandler = new UpdateLobbyCharacterHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.StartGameRequest:
-                                    messageHandler = new StartGameHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.RollDice:
-                                    messageHandler = new RollDiceHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.GameState:
-                                    messageHandler = new GameStateHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.ResolveSpace:
-                                    messageHandler = new ResolveSpaceHandler(gameObject, client, this.serverData);
-                                    break;
-                                case RequestMessageType.SendCombatCommand:
-                                    messageHandler = new SendCombatCommandHandler(gameObject, client, this.serverData);
-                                    break;
-                                default:
-                                    messageHandler = new BadMessageHandler(gameObject, client, this.serverData);
-                                    break;
-                            }
-                        //}
-                    }
-
-                    this.executeMessageHandler(
-                        peer,
-                        messageHandler,
-                        client);
                 });
             });
 
             host.start(this.loopIntervalMs);
             console.info("Server ready on %s:%s", host.address().address, host.address().port);
         });
-
-        this.maintenanceIntervalHandleId = setInterval(() => {
-            this.runMaintenence();
-        }, this.maintenanceIntervalPeriod) as any;
-    }
-
-    public stop(): void {
-        if (this.maintenanceIntervalHandleId) {
-            clearInterval(this.maintenanceIntervalHandleId);
-        }
-
-        this.gameServer.stop();
     }
 
     private executeMessageHandler(
         peer: any,
-        messageHandler: MesssageHandlerBase,
-        client: GameClient): void {
+        messageHandler: MessageHandlerBase,
+        player: Player): void {
 
         try {
             if (messageHandler !== null) {
@@ -187,176 +110,45 @@ export class App {
                                 continue;
                             }
 
-                            // peel all of the children off so they're not sent back with the message
-                            const childHandlers: ResponseObjectChild[] = [];
-
-                            if (responseObject.childHandlers) {
-                                while (responseObject.childHandlers.length) {
-                                    childHandlers.push(...responseObject.childHandlers.splice(0, 1));
-                                }
-                            }
-
-                            if (responseObject.visibility === VisibilityLevelType.Room) {
-                                for (const lobby of this.serverData.lobbies) {
-
-                                    if (lobby.id === client.lobbyId) {
-                                        for (const player of lobby.players) {
-                                            const user = this.serverData.getUser(player.clientId);
-                                            this.sendResponse(user.peerRef, responseObject, user);
-                                        }
-                                        break;
-                                    }
-                                }
+                            if (responseObject.visibility === VisibilityLevelType.World) {
+                                // send response to all players
+                            } else if (responseObject.visibility === VisibilityLevelType.Map) {
+                                // send response to players nearby
                             } else if (responseObject.visibility === VisibilityLevelType.Private) {
-                                this.sendResponse(peer, responseObject, client);
-                            }
-
-                            if (childHandlers.length > 0) {
-                                for (const childHandler of childHandlers) {
-                                    if (childHandler.delaySeconds > 0) {
-                                        setTimeout(() => {
-                                            this.executeMessageHandler(peer, childHandler.responseAction, client);
-                                        }, childHandler.delaySeconds * 1000);
-                                    } else {
-                                        this.executeMessageHandler(peer, childHandler.responseAction, client);
-                                    }
-                                }
+                                this.sendResponse(peer, responseObject, player);
                             }
                         }
                     }
                 }, (rejectionReason) => {
-                    const errors = ServerService.createErrorMessage(
-                        VisibilityLevelType.Private,
-                        ErrorType.GeneralServerError);
-
-                    this.sendResponse(peer, errors[0], client);
+                    throw new Error(rejectionReason);
                 });
             }
         } catch (err) {
-            const errors = ServerService.createErrorMessage(
-                VisibilityLevelType.Private,
-                ErrorType.GeneralServerError);
-
-            this.sendResponse(peer, errors[0], client);
+            console.log(`Error processing response to ${player.id}`)
+            console.log(err);
+            peer.disconnectNow();
         }
     }
 
-    // TODO: make this async so it doesn't block anything else
-    private runMaintenence(): void {
-        let i = this.serverData.clients.length;
-
-        const prunedClientIds: string[] = [];
-
-        while (i--) {
-            if (!this.serverData.clients[i]) {
-                this.serverData.clients.splice(i, 1);
-            } else {
-                const currentTime = ServerService.getUtcTimestamp();
-                const lastActivityDelta = currentTime - this.serverData.clients[i].lastActivity;
-
-                if (lastActivityDelta >= this.clientInactivityThresholdMs) {
-                    prunedClientIds.push(this.serverData.clients[i].clientId);
-                    console.log(`User ${this.serverData.clients[i].clientId} pruned for inactivity.`);
-                    this.serverData.clients.splice(i, 1);
-                } 
-                if (lastActivityDelta >= this.clientPingThresholdMs) {
-                    this.sendPing(this.serverData.clients[i]);
-                }
-            }
-        }
-
-        let j = this.serverData.lobbies.length;
-
-        while (j--) {
-            let k = this.serverData.lobbies[j].players.length;
-            let shouldReorderSlots: boolean = false;
-
-            while (k--) {
-                if (prunedClientIds.indexOf(this.serverData.lobbies[j].players[k].clientId) > -1) {
-                    this.serverData.lobbies[j].players.splice(k, 1);
-                    shouldReorderSlots = true;
-                }
-            }
-
-            // no players left in this lobby, remove the lobby
-            if (this.serverData.lobbies[j].players.length === 0) {
-                this.serverData.lobbies.splice(j, 1);
-            } else if (shouldReorderSlots) {
-                // at least one player removed from the lobby, reorder slots
-                // send notification to other players in lobby
-                for (let l = 0; l < this.serverData.lobbies[j].players.length; l++) {
-                    this.serverData.lobbies[j].players[l].slot = (l + 1);
-
-                    // find the player ref
-                    for (const client of this.serverData.clients) {
-                        if (client.clientId === this.serverData.lobbies[j].players[l].clientId) {
-
-                            const responseObject = {
-                                visibility: VisibilityLevelType.Private,
-                                type: ResponseMessageType.PlayerIdleDrop,
-                                lobby: new GameLobbyModel(this.serverData.lobbies[j]),
-                                childHandlers: null
-                            };
-
-                            this.sendResponse(
-                                client.peerRef,
-                                responseObject,
-                                client
-                            );
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private sendPing(client: GameClient): void {
-        if (!client || !client.peerRef) {
-            return;
-        }
-
-        const message = {
-            type: ResponseMessageType.Ping,
-            visibility: VisibilityLevelType.Private,
-            childHandlers: null
-        };
-
-        this.sendResponse(client.peerRef, message, client);
-    }
-
-    private sendResponse(peer: Peer, data: IResponseObject, client: GameClient): void {
+    private sendResponse(peer: Peer, data: IResponseObject, player: Player): void {
         const jsonResponse = JSON.stringify(data);
-        let clientId = "";
+        let playerId: number = null;
 
-        if (client && client.clientId) {
-            clientId = client.clientId;
+        if (player && player.id) {
+            playerId = player.id;
         }
 
         peer.send(0, jsonResponse, (err: any) => {
             if (err) {
-                if (data.type === ResponseMessageType.Ping) {
-                    // Remove user fallback if Maintenance does not prune user:
-                    /*
-                    let i = this.serverData.clients.length;
-                    while (i--) {
-                        if (this.serverData.clients[i].clientId == clientId) {
-                            //prunedClientIds.push(this.serverData.clients[i].clientId);
-                            this.serverData.clients.splice(i, 1);
-                            console.log(`User ${clientId} removed for non-response.`)
-                            break;
-                        }
-                    }
-                    */
-                } else {
-                    console.log("Error sending packet!");
-                }
+                console.log("Error sending packet!");
+                peer.disconnectNow();
             } else {
                 // don't log if ping
                 if (data.type === ResponseMessageType.PingResponse) {
                     return;
                 }
-    
-                let message: string = `Message sent successfully to ${clientId}`;
+
+                let message: string = `Message sent successfully to ${playerId ?? "--"}`;
 
                 if (data.type) {
                     message += ` with message type of ${data.type}`;

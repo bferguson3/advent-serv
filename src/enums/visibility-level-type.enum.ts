@@ -1,4 +1,5 @@
 export enum VisibilityLevelType {
-    Room = "room",
+    World = "world",
+    Map = "map",
     Private = "private"
 }

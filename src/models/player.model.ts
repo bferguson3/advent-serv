@@ -11,6 +11,8 @@ export class Player extends Character {
     public rHandPos: Vector3;
     public rHandRot: Vector4;
     public rHandObj: string;
+    public headPos: Vector3;
+    public headRot: Vector4;
     public faceTx: string;
     public bodyTx: string;
 }

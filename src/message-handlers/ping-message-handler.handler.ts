@@ -13,7 +13,7 @@ export class PingMessageHandler extends MessageHandlerBase {
             type: ResponseMessageType.PingResponse,
             visibility: VisibilityLevelType.Private,
             playerId: this.player.id,
-            value: this.player.lastActivity
+            ts: this.player.lastActivity
         };
 
         return [response];

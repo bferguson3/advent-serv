@@ -1,14 +1,20 @@
 import { Enemy } from "./enemy.model";
-import { Player } from "./player.model";
 
 export class ServerData {
     public maxPlayerCount: number;
-    public players: Player[];
+    public players: {};
     public enemies: Enemy[];
 
     constructor(maxPlayerCount: number) {
         this.maxPlayerCount = maxPlayerCount;
-        this.players = Array(maxPlayerCount).fill(null);
+        this.players = {};
         this.enemies = [];
+    }
+
+    public get broadcastData(): any {
+        return {
+            players: this.players,
+            enemies: this.enemies
+        };
     }
 }

@@ -34,6 +34,12 @@ Below is a list of commands.
 * `pong`
     - Exists mainly as a debug tool. Lets the server know that the client is still connected for printable messages via code. No response is sent to the client.
 
+* `local_chat`
+    - Allows players to send messages to other players from a set list of possible options.
+    - Packet should have a `receipt_required` property that indicates if packet can be dropped.
+    - Packet should have a `message_text` property that indicates the message sent. See below for possible `message_text` values.
+            
+
 ### Global messages
 
 The server will send out world update packets to players on a regular interval. These messages are as follows:
@@ -68,7 +74,6 @@ The server will send out world update packets to players on a regular interval. 
 }
 ```
 
-
 ### Channel usage
 
 Enet provides the ability to use multiple channels. Best practice is to separate communication into channels logically for performance.
@@ -77,4 +82,11 @@ For this server channels are used as follows:
 
 * 0 : Base bi-directional game communication
 * 1 : Server to client broadcasts 
+
+
+### `message_text` options
+```
+0: Hello
+1: Goodbye
+```
 

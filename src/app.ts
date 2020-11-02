@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, PACKET_FLAG, Peer } from "enet";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { IResponseObject } from "./interfaces";
-import { MessageHandlerBase, PingMessageHandler } from "./message-handlers";
+import { MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
 import { Player, ServerData } from "./models";
 import { ServerService } from "./services";
 
@@ -74,6 +74,9 @@ export class App {
                                 break;
                             case RequestMessageType.Pong:
                                 // basically just do nothing other than update the activity time
+                                break;
+                            case RequestMessageType.Update:
+                                messageHandler = new UpdateMessageHandler(gameObject, player, this.serverData);
                                 break;
                             default:
                                 // unsupported messaage

@@ -34,6 +34,9 @@ Below is a list of commands.
 * `pong`
     - Exists mainly as a debug tool. Lets the server know that the client is still connected for printable messages via code. No response is sent to the client.
 
+* `update`
+    - Updates player state. Send entire player object to be updated in data.
+
 ### Global messages
 
 The server will send out world update packets to players on a regular interval. These messages are as follows:

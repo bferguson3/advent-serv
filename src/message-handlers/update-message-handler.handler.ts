@@ -22,8 +22,6 @@ export class UpdateMessageHandler extends MessageHandlerBase {
 
         this.serverData.players[this.player.id] = this.player;
 
-        console.log("updating player pos");
-
         // don't send a response
         return [];
     }

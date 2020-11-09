@@ -7,6 +7,16 @@ export class DataService {
     public static userDataPath: string = "./player-data";
     public static fileEncoding: string = "utf8";
 
+    public static async setupDataService() {
+        fs.mkdir(this.userDataPath, { recursive: true }, (err) => {
+            if (err) {
+                throw err;
+            }
+
+            console.info(`Creating ${this.userDataPath}`);
+        });
+    }
+
     public static async playerExists(username: string): Promise<boolean> {
         const filePath = this.getUserPath(username);
 
@@ -75,7 +85,7 @@ export class DataService {
             player.id = id;
             return player;
         } catch {
-            throw new Error("Unable to write player file");
+            throw new Error("Unable to create player");
         }
     }
 
@@ -118,7 +128,7 @@ export class DataService {
 
         const path = this.getUserPath(playerData.username);
 
-        const promise = new Promise<void>((resolve, reject) => {
+        const promise = new Promise<void>(async (resolve, reject) => {
             const dataToWrite = JSON.stringify(playerData);
 
             fs.writeFile(path, dataToWrite, this.fileEncoding, (err) => {

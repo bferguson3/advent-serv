@@ -3,7 +3,7 @@ import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./
 import { IResponseObject } from "./interfaces";
 import { LoginMessageHandler, MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
 import { Player, ServerData } from "./models";
-import { ServerService } from "./services";
+import { DataService, ServerService } from "./services";
 
 export class App {
 
@@ -22,6 +22,8 @@ export class App {
 
     public async start(): Promise<void> {
         console.info("Starting server...");
+
+        await DataService.setupDataService();
 
         this.gameServer = createServer({
             address: this.addr,
@@ -80,6 +82,7 @@ export class App {
                                 break;
                             case RequestMessageType.Login:
                                 messageHandler = new LoginMessageHandler(gameObject, player, this.serverData);
+                                break;
                             default:
                                 // unsupported messaage
                                 throw new Error("Unsupported message");

@@ -34,6 +34,30 @@ Below is a list of commands.
 * `pong`
     - Exists mainly as a debug tool. Lets the server know that the client is still connected for printable messages via code. No response is sent to the client.
 
+* `login`
+    - If user does not exist when login is initiated, new player will be created with the password that was entered
+    - If user does exist, user will be authenticated
+    - Expected packet:
+    ```
+    {
+        message_type = "login",
+        data = {
+            username: [username],
+            password: [password]
+        }
+    }
+    ```
+    - Response data:
+    ```
+    {
+        type: string = "login_response",
+        visibility: string = "private",
+        ts: integer = [player's last message receipt UTC timestamp]
+        player: player state object
+    }
+    ```
+
+
 * `update`
     - Updates player state. Send entire player object to be updated in data.
 

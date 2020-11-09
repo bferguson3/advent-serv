@@ -1,9 +1,9 @@
 import { Address, createServer, Host, Packet, PACKET_FLAG, Peer } from "enet";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { IResponseObject } from "./interfaces";
-import { MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
+import { LoginMessageHandler, MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
 import { Player, ServerData } from "./models";
-import { ServerService } from "./services";
+import { DataService, ServerService } from "./services";
 
 export class App {
 
@@ -22,6 +22,8 @@ export class App {
 
     public async start(): Promise<void> {
         console.info("Starting server...");
+
+        await DataService.setupDataService();
 
         this.gameServer = createServer({
             address: this.addr,
@@ -69,14 +71,17 @@ export class App {
                         let messageHandler: MessageHandlerBase = null;
 
                         switch (gameObject.message_type) {
+                            case RequestMessageType.Update:
+                                messageHandler = new UpdateMessageHandler(gameObject, player, this.serverData);
+                                break;
                             case RequestMessageType.Ping:
                                 messageHandler = new PingMessageHandler(gameObject, player, this.serverData);
                                 break;
                             case RequestMessageType.Pong:
                                 // basically just do nothing other than update the activity time
                                 break;
-                            case RequestMessageType.Update:
-                                messageHandler = new UpdateMessageHandler(gameObject, player, this.serverData);
+                            case RequestMessageType.Login:
+                                messageHandler = new LoginMessageHandler(gameObject, player, this.serverData);
                                 break;
                             default:
                                 // unsupported messaage

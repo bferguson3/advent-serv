@@ -61,7 +61,6 @@ export class DataService {
                 return player;
             }
         } catch (ex){
-            console.log(ex);
             // do nothing, just return null
         }
 

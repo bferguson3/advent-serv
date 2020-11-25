@@ -19,7 +19,7 @@ Message responses will all include a `type` property that indicates how the clie
 
 Below is a list of commands.
 
-* `get_ping`
+* `get_ping` (deprecated)
     - Exists mainly as a debug tool. Does not expect any data to be sent with the command.
     - Response data:
     ```
@@ -58,8 +58,18 @@ Below is a list of commands.
     ```
 
 
-* `update`
+* `update` (requires authentication)
     - Updates player state. Send entire player object to be updated in data.
+
+
+If a packet requires authentication and the player has not yet logged in, the server will respond with the following packet:
+```
+    {
+        type: string = "unauthenticated",
+        visibility: string = "private",
+        ts: integer = [player's last message receipt UTC timestamp]
+    }
+```
 
 ### Global messages
 

@@ -1,4 +1,5 @@
 import { Enemy } from "./enemy.model";
+import { Player } from "./player.model";
 
 export class ServerData {
     public maxPlayerCount: number;
@@ -16,5 +17,17 @@ export class ServerData {
             players: this.players,
             enemies: this.enemies
         };
+    }
+
+    public get authenticatedPlayers(): Player[] {
+        const authPlayers = [];
+
+        for (const player in this.players) {
+            if (this.players[player].isAuthenticated()) {
+                authPlayers.push(this.players[player]);
+            }
+        }
+
+        return authPlayers;
     }
 }

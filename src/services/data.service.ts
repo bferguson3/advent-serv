@@ -60,7 +60,8 @@ export class DataService {
                 const player = playerData.toPlayer();
                 return player;
             }
-        } catch {
+        } catch (ex){
+            console.log(ex);
             // do nothing, just return null
         }
 
@@ -112,7 +113,8 @@ export class DataService {
                 if (err) {
                     reject(err);
                 } else {
-                    const playerData: PlayerData = JSON.parse(data);
+                    const jsonPlayerData: PlayerData = JSON.parse(data);
+                    const playerData = PlayerData.fromJson(jsonPlayerData);
                     resolve(playerData);
                 }
             });

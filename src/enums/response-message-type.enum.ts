@@ -3,4 +3,5 @@ export enum ResponseMessageType {
     GlobalState = "state",
     Login = "login_response",
     PingResponse = "ping_response",
+    Unauthenticated = "unauthenticated"
 }

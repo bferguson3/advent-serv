@@ -35,7 +35,8 @@ export class LoginMessageHandler extends MessageHandlerBase {
             type: ResponseMessageType.Login,
             visibility: VisibilityLevelType.Private,
             ts: this.player.lastActivity,
-            player: authenticatedPlayer
+            player: authenticatedPlayer,
+            loginSuccess: authenticatedPlayer !== null
         };
 
         return [response];

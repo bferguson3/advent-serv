@@ -1,13 +1,13 @@
 import { IResponseObject } from "../interfaces";
 import { Player, ServerData } from "../models";
-import { MessageHandlerBase } from "./message-handler-base.handler";
+import { ProtectedMessageHandlerBase } from "./protected-message-handler-base.handler";
 
-export class UpdateMessageHandler extends MessageHandlerBase {
+export class UpdateMessageHandler extends ProtectedMessageHandlerBase {
     constructor(gameObject: any, player: Player, serverData: ServerData) {
         super(gameObject, player, serverData);
     }
 
-    public async handleMessage(): Promise<IResponseObject[]> {
+    protected async runHandlerLogic(): Promise<IResponseObject[]> {
 
         this.player.pos = this.gameObject.data.pos;
         this.player.rot = this.gameObject.data.rot;

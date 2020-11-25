@@ -187,7 +187,13 @@ export class App {
 
         const packet = new Packet(jsonData, PACKET_FLAG.RELIABLE);
 
-        server.broadcast(1, packet);
+        const authPlayers = serverData.authenticatedPlayers;
+
+        for (const player of authPlayers) {
+            if (server.connectedPeers[player.id]) {
+                server.connectedPeers[player.id].send(1, packet);
+            }
+        }
     }
 
     private sendResponse(peer: Peer, data: IResponseObject, player: Player): void {

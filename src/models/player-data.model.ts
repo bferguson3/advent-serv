@@ -4,6 +4,16 @@ export class PlayerData extends Player {
     public passwordHash: string;
     public passwordSalt: string;
 
+    public static fromJson(jsonCopy: PlayerData): PlayerData {
+        const copy = new PlayerData();
+        copy.passwordHash = jsonCopy.passwordHash;
+        copy.passwordSalt = jsonCopy.passwordSalt;
+        copy.username = jsonCopy.username;
+        copy.lastActivity = jsonCopy.lastActivity;
+
+        return copy;
+    }
+
     public toPlayer(): Player {
         const playerCopy = new Player();
         playerCopy.username = this.username;

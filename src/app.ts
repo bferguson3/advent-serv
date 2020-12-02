@@ -173,11 +173,6 @@ export class App {
             } else {
                 peer.numMissed = 0;
 
-                // don't log if ping
-                //if (responseData.type === ResponseMessageType.PingResponse) {
-                //    return;
-                //}
-
                 let message: string = `Message sent successfully to ${playerId ? playerId : "--"}`;
 
                 if (responseData.type) {

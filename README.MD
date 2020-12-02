@@ -19,21 +19,6 @@ Message responses will all include a `type` property that indicates how the clie
 
 Below is a list of commands.
 
-* `get_ping` (deprecated)
-    - Exists mainly as a debug tool. Does not expect any data to be sent with the command.
-    - Response data:
-    ```
-    {
-        type: string = "ping_response",
-        visibility: string = "private",
-        playerId: integer = [player's peer identification],
-        ts: integer = [player's last message receipt UTC timestamp]
-    }
-    ```
-
-* `pong`
-    - Exists mainly as a debug tool. Lets the server know that the client is still connected for printable messages via code. No response is sent to the client.
-
 * `login`
     - If user does not exist when login is initiated, new player will be created with the password that was entered
     - If user does exist, user will be authenticated
@@ -56,7 +41,8 @@ Below is a list of commands.
         player: player state object
     }
     ```
-
+* `get_state` (requires authentication)
+    - Gets the world state packet (see below)
 
 * `update` (requires authentication)
     - Updates player state. Send entire player object to be updated in data.
@@ -71,9 +57,9 @@ If a packet requires authentication and the player has not yet logged in, the se
     }
 ```
 
-### Global messages
+### Global world state
 
-The server will send out world update packets to players on a regular interval. These messages are as follows:
+The server will send out world update packets to players upon request. These messages are as follows:
 
 ```
 {
@@ -113,5 +99,5 @@ Enet provides the ability to use multiple channels. Best practice is to separate
 For this server channels are used as follows:
 
 * 0 : Base bi-directional game communication
-* 1 : Server to client broadcasts 
+* 1 : World state messages 
 

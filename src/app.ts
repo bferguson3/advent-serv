@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, PACKET_FLAG, Peer } from "enet";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { IResponseObject } from "./interfaces";
-import { LoginMessageHandler, MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
+import { LoginMessageHandler, MessageHandlerBase, PingMessageHandler, UpdateMessageHandler, WorldStateMessageHandler } from "./message-handlers";
 import { Player, ServerData } from "./models";
 import { DataService, ServerService } from "./services";
 
@@ -13,12 +13,10 @@ export class App {
     private readonly downLimit: number = 0;
     private readonly upLimit: number = 0;
     private readonly loopIntervalMs: number = 10;
-    private readonly worldBroadcastIntervalMs: number = 200;
     private readonly missedPacketThreshold: number = 25;
     private readonly serverData: ServerData = new ServerData(this.peerCount);
 
     private gameServer: Host;
-    private worldBroadcastInterval;
 
     public async start(): Promise<void> {
         console.info("Starting server...");
@@ -83,6 +81,9 @@ export class App {
                             case RequestMessageType.Login:
                                 messageHandler = new LoginMessageHandler(gameObject, player, this.serverData);
                                 break;
+                            case RequestMessageType.State:
+                                messageHandler = new WorldStateMessageHandler(gameObject, player, this.serverData);
+                                break;
                             default:
                                 // unsupported messaage
                                 throw new Error("Unsupported message");
@@ -106,14 +107,6 @@ export class App {
             host.start(this.loopIntervalMs);
 
             console.info("Server ready on %s:%s", host.address().address, host.address().port);
-
-            console.info("Starting broadcast interval");
-
-            this.worldBroadcastInterval = setInterval(
-                this.sendGlobalState,
-                this.worldBroadcastIntervalMs,
-                host,
-                this.serverData);
         });
     }
 
@@ -171,28 +164,6 @@ export class App {
 
         if (peerId) {
             delete this.serverData.players[peerId];
-        }
-    }
-
-    private sendGlobalState(server: Host, serverData: ServerData): void {
-        if (server === null || server === undefined || server.isOffline() || Object.entries(server.connectedPeers).length === 0) {
-            return;
-        }
-
-        const jsonData = JSON.stringify({
-            type: ResponseMessageType.GlobalState,
-            ts: ServerService.GetCurrentUtcDate(),
-            data: serverData.broadcastData
-        });
-
-        const packet = new Packet(jsonData, PACKET_FLAG.RELIABLE);
-
-        const authPlayers = serverData.authenticatedPlayers;
-
-        for (const player of authPlayers) {
-            if (server.connectedPeers[player.id]) {
-                server.connectedPeers[player.id].send(1, packet);
-            }
         }
     }
 

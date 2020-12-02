@@ -177,7 +177,7 @@ export class App {
             playerId = player.id;
         }
 
-        peer.send(0, jsonResponse, (err: any) => {
+        peer.send(responseObject.channel, jsonResponse, (err: any) => {
             if (err) {
                 this.handleFailure(err, `Error sending packet to ${peer._pointer}`, peer);
             } else {

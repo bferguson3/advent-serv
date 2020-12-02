@@ -11,6 +11,7 @@ export class WorldStateMessageHandler extends ProtectedMessageHandlerBase {
     protected async runHandlerLogic(): Promise<IResponseObject[]> {
         const response = {
             visibility: VisibilityLevelType.Private,
+            channel: 1,
             data: {
                 type: ResponseMessageType.GlobalState,
                 playerId: this.player.id,

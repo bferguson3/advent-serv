@@ -13,6 +13,7 @@ export abstract class ProtectedMessageHandlerBase extends MessageHandlerBase {
         if (!this.player.isAuthenticated()) {
             const unauthPacket = {
                 visibility: VisibilityLevelType.Private,
+                channel: 0,
                 data: {
                     type: ResponseMessageType.Unauthenticated,
                     ts: this.player.lastActivity,

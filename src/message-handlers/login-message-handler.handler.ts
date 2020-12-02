@@ -33,6 +33,7 @@ export class LoginMessageHandler extends MessageHandlerBase {
 
         const response = {
             visibility: VisibilityLevelType.Private,
+            channel: 0,
             data: {
                 type: ResponseMessageType.Login,
                 ts: this.player.lastActivity,

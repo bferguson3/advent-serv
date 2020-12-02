@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Server for InAdvent multiplayer game",
   "scripts": {
+    "premerge": "tsc",
     "build": "tsc",
+    "postbuild": "cp package.json dist/package.json && cd dist && npm install --only=production",
     "run-app": "node ./dist/index",
     "start": "run-s build run-app",
     "serve": "run-s build run-app"

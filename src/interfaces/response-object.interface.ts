@@ -1,4 +1,6 @@
+import { IResponseData } from "./response-data.interface";
+
 export interface IResponseObject {
-    type: string;
+    data: IResponseData;
     visibility: string;
 }

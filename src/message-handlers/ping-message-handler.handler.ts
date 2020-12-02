@@ -10,10 +10,12 @@ export class PingMessageHandler extends MessageHandlerBase {
 
     public async handleMessage(): Promise<IResponseObject[]> {
         const response = {
-            type: ResponseMessageType.PingResponse,
             visibility: VisibilityLevelType.Private,
-            playerId: this.player.id,
-            ts: this.player.lastActivity
+            data: {
+                type: ResponseMessageType.PingResponse,
+                playerId: this.player.id,
+                ts: this.player.lastActivity
+            }
         };
 
         return [response];

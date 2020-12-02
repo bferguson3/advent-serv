@@ -167,8 +167,10 @@ export class App {
         }
     }
 
-    private sendResponse(peer: Peer, data: IResponseObject, player: Player): void {
-        const jsonResponse = JSON.stringify(data);
+    private sendResponse(peer: Peer, responseObject: IResponseObject, player: Player): void {
+
+        const responseData = responseObject.data;
+        const jsonResponse = JSON.stringify(responseData);
         let playerId: number = null;
 
         if (player && player.id) {
@@ -182,14 +184,14 @@ export class App {
                 peer.numMissed = 0;
 
                 // don't log if ping
-                if (data.type === ResponseMessageType.PingResponse) {
+                if (responseData.type === ResponseMessageType.PingResponse) {
                     return;
                 }
 
                 let message: string = `Message sent successfully to ${playerId ? playerId : "--"}`;
 
-                if (data.type) {
-                    message += ` with message type of ${data.type}`;
+                if (responseData.type) {
+                    message += ` with message type of ${responseData.type}`;
                 }
 
                 console.info(message);

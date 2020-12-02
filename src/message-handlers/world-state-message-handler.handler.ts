@@ -10,11 +10,13 @@ export class WorldStateMessageHandler extends ProtectedMessageHandlerBase {
 
     protected async runHandlerLogic(): Promise<IResponseObject[]> {
         const response = {
-            type: ResponseMessageType.GlobalState,
             visibility: VisibilityLevelType.Private,
-            playerId: this.player.id,
-            ts: this.player.lastActivity,
-            data: this.serverData.broadcastData
+            data: {
+                type: ResponseMessageType.GlobalState,
+                playerId: this.player.id,
+                ts: this.player.lastActivity,
+                data: this.serverData.broadcastData
+            }
         };
 
         return [response];

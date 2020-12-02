@@ -12,12 +12,9 @@ export abstract class ProtectedMessageHandlerBase extends MessageHandlerBase {
     public async handleMessage(): Promise<IResponseObject[]> {
         if (!this.player.isAuthenticated()) {
             const unauthPacket = {
+                type: ResponseMessageType.Unauthenticated,
                 visibility: VisibilityLevelType.Private,
-                channel: 0,
-                data: {
-                    type: ResponseMessageType.Unauthenticated,
-                    ts: this.player.lastActivity,
-                }
+                ts: this.player.lastActivity,
             };
 
             return [unauthPacket];

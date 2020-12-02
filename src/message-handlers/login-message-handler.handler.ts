@@ -32,14 +32,11 @@ export class LoginMessageHandler extends MessageHandlerBase {
         }
 
         const response = {
+            type: ResponseMessageType.Login,
             visibility: VisibilityLevelType.Private,
-            channel: 0,
-            data: {
-                type: ResponseMessageType.Login,
-                ts: this.player.lastActivity,
-                player: authenticatedPlayer,
-                loginSuccess: authenticatedPlayer !== null
-            }
+            ts: this.player.lastActivity,
+            player: authenticatedPlayer,
+            loginSuccess: authenticatedPlayer !== null
         };
 
         return [response];

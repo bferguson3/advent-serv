@@ -1,7 +1,7 @@
 import { Address, createServer, Host, Packet, PACKET_FLAG, Peer } from "enet";
 import { RequestMessageType, ResponseMessageType, VisibilityLevelType } from "./enums";
 import { IResponseObject } from "./interfaces";
-import { LoginMessageHandler, MessageHandlerBase, PingMessageHandler, UpdateMessageHandler } from "./message-handlers";
+import { LoginMessageHandler, MessageHandlerBase, UpdateMessageHandler } from "./message-handlers";
 import { Player, ServerData } from "./models";
 import { DataService, ServerService } from "./services";
 
@@ -64,21 +64,11 @@ export class App {
                     try {
                         const gameObject = JSON.parse(packet.data().toString());
 
-                        if (gameObject.message_type !== RequestMessageType.Ping) {
-                            console.info(`Got packet from ${player.id} with message_type of ${gameObject.message_type}`);
-                        }
-
                         let messageHandler: MessageHandlerBase = null;
 
                         switch (gameObject.message_type) {
                             case RequestMessageType.Update:
                                 messageHandler = new UpdateMessageHandler(gameObject, player, this.serverData);
-                                break;
-                            case RequestMessageType.Ping:
-                                messageHandler = new PingMessageHandler(gameObject, player, this.serverData);
-                                break;
-                            case RequestMessageType.Pong:
-                                // basically just do nothing other than update the activity time
                                 break;
                             case RequestMessageType.Login:
                                 messageHandler = new LoginMessageHandler(gameObject, player, this.serverData);
@@ -209,11 +199,6 @@ export class App {
                 this.handleFailure(err, `Error sending packet to ${peer._pointer}`, peer);
             } else {
                 peer.numMissed = 0;
-
-                // don't log if ping
-                if (data.type === ResponseMessageType.PingResponse) {
-                    return;
-                }
 
                 let message: string = `Message sent successfully to ${playerId ? playerId : "--"}`;
 
